@@ -9,7 +9,7 @@ os:
   - linux
   - osx
             
-script: go test -v
+script: go test -v ./...
 
 notifications:
   email: false
