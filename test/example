@@ -1,0 +1,6 @@
+#!/bin/bash
+
+printf "Content-type: text/plain\n\n"
+printf "[%s %s %s %s %s]\n" $PATH_INFO $CGI_LOCAL $CGI_GLOBAL $1 $QUERY_STRING
+printf "example error message\n" > /dev/stderr
+exit 0
