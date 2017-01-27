@@ -3,13 +3,14 @@
 *.2
 *.3
 *.4
-errors.log
-run
+build
 Caddyfile
 caddy.log
-build
 coverage
 coverage.html
+errors.log
+run
+*.swp
 #
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o

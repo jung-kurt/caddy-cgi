@@ -44,6 +44,27 @@ func setup(c *caddy.Controller) (err error) {
 	return configureServer(c, httpserver.GetConfig(c))
 }
 
+// parseExec parses an "exec" line
+func parseExec(app *appType, args []string) (err error) {
+	if len(args) > 0 {
+		app.exe = args[0]
+		app.args = append(app.args, args[1:]...)
+	} else {
+		err = errorf("expecting at least one argument to follow \"exec\"")
+	}
+	return
+}
+
+// parseMatch parses a match line
+func parseMatch(app *appType, args []string) (err error) {
+	if len(args) > 0 {
+		app.matches = append(app.matches, args...)
+	} else {
+		err = errorf("expecting at least one argument to follow \"match\"")
+	}
+	return
+}
+
 // parseApp parses the brace-block following an "app" directive
 func parseApp(c *caddy.Controller) (app appType, err error) {
 	if c.Next() {
@@ -54,24 +75,11 @@ func parseApp(c *caddy.Controller) (app appType, err error) {
 				args := c.RemainingArgs()
 				switch val {
 				case "exec":
-					if len(args) > 0 {
-						app.exe = args[0]
-						app.args = append(app.args, args[1:]...)
-					} else {
-						errorf("expecting at least one argument to follow \"exec\"")
-					}
+					err = parseExec(&app, args)
 				case "match":
-					if len(args) > 0 {
-						app.matches = append(app.matches, args...)
-					} else {
-						errorf("expecting at least one argument to follow \"match\"")
-					}
+					err = parseMatch(&app, args)
 				case "env":
-					var list [][2]string
-					list, err = parseEnv(c, args)
-					if err == nil {
-						app.envs = append(app.envs, list...)
-					}
+					err = parseEnv(&app.envs, args)
 				case "pass_env":
 					app.passEnvs = append(app.passEnvs, args...)
 				case "}":
@@ -95,17 +103,17 @@ func parseApp(c *caddy.Controller) (app appType, err error) {
 }
 
 // parseEnv parses a list of "key = value" pairs on a line
-func parseEnv(c *caddy.Controller, args []string) (list [][2]string, err error) {
+func parseEnv(envs *[][2]string, args []string) (err error) {
 	count := len(args)
 	for j := 0; j < count && err == nil; j++ {
 		pair := strings.SplitN(args[j], "=", 2)
 		if len(pair) == 2 {
-			list = append(list, [2]string{
-				strings.TrimSpace(pair[0]),
-				strings.TrimSpace(pair[1]),
-			})
+			var kv [2]string
+			kv[0] = trim(pair[0])
+			kv[1] = trim(pair[1])
+			*envs = append(*envs, kv)
 		} else {
-			err = c.Errf("expecting key=value format, got \"%s\"", args[j])
+			err = errorf("expecting key=value format, got \"%s\"", args[j])
 		}
 	}
 	return
@@ -138,11 +146,7 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 						rule.apps = append(rule.apps, app)
 					}
 				case "env":
-					var list [][2]string
-					list, err = parseEnv(c, args)
-					if err == nil {
-						rule.envs = append(rule.envs, list...)
-					}
+					err = parseEnv(&rule.envs, args)
 				case "pass_env":
 					rule.passEnvs = append(rule.passEnvs, args...)
 				case "}":
