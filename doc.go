@@ -18,20 +18,21 @@
 Package cgi implements the common gateway interface (CGI) for Caddy, a modern,
 full-featured, easy-to-use web server.
 
-CGI lets you generate dynamic content on your website by means of command line
-scripts. To collect information about the inbound HTTP request, examine certain
-environment variables such as PATH_INFO and QUERY_STRING. Then, to return a
-dynamically generated web page to the client, simply write content to standard
-output. In the case of POST requests, you read additional inbound content by
-means of the standard input.
+Generate dynamic content on your website by means of command line scripts. To
+collect information about the inbound HTTP request, examine certain environment
+variables such as PATH_INFO and QUERY_STRING. Then, to return a dynamically
+generated web page to the client, simply write content to standard output. In
+the case of POST requests, you read additional inbound content by means of the
+standard input.
 
 The advantage of CGI is that you do not need to fuss with persistent server
 startup, long term memory management, sockets, and crash recovery. Your script
-is called when a request matches one the patterns you specify in Caddyfile. As
-soon as it completes its response it terminates. This simplicity makes CGI a
-perfect complement to the straightforward operation and configuration of Caddy.
-The benefits of Caddy, including HTTPS by default, basic access authentication,
-and lots of middleware options extend easily to your CGI scripts.
+is called when a request matches one the patterns you specify in your
+Caddyfile. As soon as your script completes its response it terminates. This
+simplicity makes CGI a perfect complement to the straightforward operation and
+configuration of Caddy. The benefits of Caddy, including HTTPS by default,
+basic access authentication, and lots of middleware options extend easily to
+your CGI scripts.
 
 The disadvantage of CGI is that Caddy needs to start a new process for each
 request. This could adversely impact your server's responsiveness in some
@@ -41,21 +42,17 @@ scripts take a long time to respond. However, in many cases, such as using a
 pre-compiled CGI application like fossil or a Lua script, the impact will
 generally be insignificant.
 
-# Syntax
+# Basic syntax
 
 The cgi directive lets you associate one or more patterns with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
-```
-cgi match exec [args...]
-```
+	cgi match exec [args...]
 
-Here is an example.
+Here is an example:
 
-```
-cgi /report {root}/cgi-bin/report
-```
+	cgi /report {root}/cgi-bin/report
 
 When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
@@ -65,18 +62,15 @@ it is assumed that the script is self-contained, for example a pre-compiled CGI
 application or a shell script. For example, the following script is similar to
 one used in the cgi plugin's test suite:
 
-```
-#!/bin/bash
+	#!/bin/bash
 
-printf "Content-type: text/plain\n\n"
-printf "[%s %s %s %s %s]\n" $PATH_INFO $CGI_LOCAL $CGI_GLOBAL $1 $QUERY_STRING
-exit 0
-
-```
+	printf "Content-type: text/plain\n\n"
+	printf "[%s %s %s %s %s]\n" $PATH_INFO $CGI_LOCAL $CGI_GLOBAL $1 $QUERY_STRING
+	exit 0
 
 The environment variables PATH_INFO and QUERY_STRING are populated and passed
 to the script automatically. There are a number of other standard CGI variables
-included that are described below. lIf you need to pass any special environment
+included that are described below. If you need to pass any special environment
 variables or allow any environment variables that are part of Caddy's process
 to pass to your script, you will need to use the advanced directive syntax
 described below.
@@ -92,9 +86,7 @@ the standard Caddy placeholders such as {method} and {host}.
 
 You can include glob wildcards in your matches. Here is an example:
 
-```
-cgi /report/*.lua /usr/bin/lua {match}
-```
+	cgi /report/*.lua /usr/bin/lua {match}
 
 In this case, the cgi middleware will match requests such as
 https://example.com/report/weekly.lua and
@@ -113,8 +105,8 @@ That looks like this:
 
 	cgi {
 	  app match script [args...]
-	  env key1=val1 [keyn=valn...]
-	  pass_env key1 [keyn...]
+	  env key1=val1 [key2=val2...]
+	  pass_env key1 [key2...]
 	}
 
 Each of the keywords app, env, and pass_env may be repeated. The env and
@@ -124,11 +116,11 @@ the application level, the following syntax can be used:
 	cgi {
 	  app {
 	    match script [args...]
-	    env key1=val1 [keyn=valn...]
-	    pass_env key1 [keyn...]
+	    env key1=val1 [key2=val2...]
+	    pass_env key1 [key2...]
 	  }
-	  env key1=val1 [keyn=valn...]
-	  pass_env key1 [keyn...]
+	  env key1=val1 [key2=val2...]
+	  pass_env key1 [key2...]
 	}
 
 */

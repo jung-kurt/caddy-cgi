@@ -1,4 +1,3 @@
-// Package cgi is middleware that handles CGI requests.
 package cgi
 
 import (
