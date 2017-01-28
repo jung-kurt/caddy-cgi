@@ -104,31 +104,26 @@ That looks like this:
 
 ```
 cgi {
-
-```
-app match script [args...]
-env key1=val1 [keyn=valn...]
-pass_env key1 [keyn...]
-```
-
+  app match script [args...]
+  env key1=val1 [keyn=valn...]
+  pass_env key1 [keyn...]
 }
 ```
+
 Each of the keywords app, env, and pass_env may be repeated. The env and
 pass_env lines are optional. If you wish to control environment variables at
 the application level, the following syntax can be used:
 
-cgi {
-
 ```
+cgi {
   app {
-	  match script [args...]
-	  env key1=val1 [keyn=valn...]
-	  pass_env key1 [keyn...]
+    match script [args...]
+    env key1=val1 [keyn=valn...]
+    pass_env key1 [keyn...]
   }
   env key1=val1 [keyn=valn...]
   pass_env key1 [keyn...]
-```
-
 }
+```
 
 

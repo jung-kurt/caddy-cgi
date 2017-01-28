@@ -111,26 +111,25 @@ In order to specify custom environment variables or pass along the environment
 variables known to Caddy, you will need to use the advanced directive syntax.
 That looks like this:
 
-```
-cgi {
-  app match script [args...]
-  env key1=val1 [keyn=valn...]
-  pass_env key1 [keyn...]
-}
-```
+	cgi {
+	  app match script [args...]
+	  env key1=val1 [keyn=valn...]
+	  pass_env key1 [keyn...]
+	}
+
 Each of the keywords app, env, and pass_env may be repeated. The env and
 pass_env lines are optional. If you wish to control environment variables at
 the application level, the following syntax can be used:
 
-cgi {
-  app {
-	  match script [args...]
+	cgi {
+	  app {
+	    match script [args...]
+	    env key1=val1 [keyn=valn...]
+	    pass_env key1 [keyn...]
+	  }
 	  env key1=val1 [keyn=valn...]
 	  pass_env key1 [keyn...]
-  }
-  env key1=val1 [keyn=valn...]
-  pass_env key1 [keyn...]
-}
+	}
 
 */
 package cgi
