@@ -1,7 +1,7 @@
 # cgi
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/jung-kurt/gofpdf?status.svg)](https://godoc.org/github.com/jung-kurt/caddy-cgi)
+[![GoDoc](https://godoc.org/github.com/jung-kurt/caddy-cgi?status.svg)](https://godoc.org/github.com/jung-kurt/caddy-cgi)
 [![Build Status](https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master)](https://travis-ci.org/jung-kurt/caddy-cgi)
 
 {{.Doc}}
