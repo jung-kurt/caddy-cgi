@@ -3,6 +3,7 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/jung-kurt/caddy-cgi?status.svg)](https://godoc.org/github.com/jung-kurt/caddy-cgi)
 [![Build Status](https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master)](https://travis-ci.org/jung-kurt/caddy-cgi)
+[![Report](https://goreportcard.com/badge/github.com/jung-kurt/caddy-cgi)](https://goreportcard.com/report/github.com/jung-kurt/caddy-cgi)
 
 Package cgi implements the common gateway interface (CGI) for Caddy, a modern,
 full-featured, easy-to-use web server.
@@ -31,8 +32,7 @@ scripts take a long time to respond. However, in many cases, such as using a
 pre-compiled CGI application like fossil or a Lua script, the impact will
 generally be insignificant.
 
-# Basic syntax
-
+##Basic Syntax
 The cgi directive lets you associate one or more patterns with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
@@ -94,8 +94,7 @@ could be something like /www/report/weekly.lua based on your Cadddyfile) will
 be passed to the Lua interpreter. In this case, the Lua script does not need
 the shebang that would be needed in a standalone script.
 
-# Advanced syntax
-
+##Advanced Syntax
 In order to specify custom environment variables or pass along the environment
 variables known to Caddy, you will need to use the advanced directive syntax.
 That looks like this:

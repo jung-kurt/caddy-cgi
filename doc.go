@@ -42,7 +42,7 @@ scripts take a long time to respond. However, in many cases, such as using a
 pre-compiled CGI application like fossil or a Lua script, the impact will
 generally be insignificant.
 
-# Basic syntax
+Basic Syntax
 
 The cgi directive lets you associate one or more patterns with a particular
 script. The directive can be repeated any reasonable number of times. Here is
@@ -97,7 +97,7 @@ could be something like /www/report/weekly.lua based on your Cadddyfile) will
 be passed to the Lua interpreter. In this case, the Lua script does not need
 the shebang that would be needed in a standalone script.
 
-# Advanced syntax
+Advanced Syntax
 
 In order to specify custom environment variables or pass along the environment
 variables known to Caddy, you will need to use the advanced directive syntax.
