@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2017 Kurt Jung (Gmail: kurt.w.jung)
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 package cgi
 
 import (
@@ -5,6 +21,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/cgi"
+	"path"
 	"path/filepath"
 
 	"github.com/mholt/caddy/caddyhttp/httpserver"
@@ -13,8 +30,8 @@ import (
 // match returns true if the request string (reqStr) matches the pattern string
 // (patternStr), false otherwise. If true is returned, it is followed by the
 // prefix that matches the pattern and the unmatched portion to its right.
-// patternStr uses glob notation; see path/filepath/Match for matching details.
-// If the pattern is invalid (for example, contains an unpaired "["), false is
+// patternStr uses glob notation; see path/Match for matching details. If the
+// pattern is invalid (for example, contains an unpaired "["), false is
 // returned.
 func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 	var str, last string
@@ -22,7 +39,7 @@ func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 	str = reqStr
 	last = ""
 	for last != str && !ok && err == nil {
-		ok, err = filepath.Match(patternStr, str)
+		ok, err = path.Match(patternStr, str)
 		if err == nil {
 			if !ok {
 				last = str

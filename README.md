@@ -8,12 +8,12 @@
 Package cgi implements the common gateway interface (CGI) for Caddy, a modern,
 full-featured, easy-to-use web server.
 
-Generate dynamic content on your website by means of command line scripts. To
-collect information about the inbound HTTP request, examine certain environment
-variables such as PATH_INFO and QUERY_STRING. Then, to return a dynamically
-generated web page to the client, simply write content to standard output. In
-the case of POST requests, you read additional inbound content by means of the
-standard input.
+This plugin lets you generate dynamic content on your website by means of
+command line scripts. To collect information about the inbound HTTP request,
+examine certain environment variables such as PATH_INFO and QUERY_STRING. Then,
+to return a dynamically generated web page to the client, simply write content
+to standard output. In the case of POST requests, you read additional inbound
+content by means of the standard input.
 
 The advantage of CGI is that you do not need to fuss with persistent server
 startup, long term memory management, sockets, and crash recovery. Your script
@@ -72,9 +72,9 @@ described below.
 
 The exec field in the example includes the placeholder {root} that is
 substituted with Caddy's specified root directory. You may also use the
-placeholder {match} that will be substituted with the rooted script. In this
-example, {match} would be /www/cgi-bin/report assuming that /www is Caddy's
-configured root.
+placeholder {match} that will be substituted with the rooted script name. In
+this example, {match} would be /www/cgi-bin/report assuming that /www is
+Caddy's configured root.
 
 The optional arguments to the script can contain these placeholders as well as
 the standard Caddy placeholders such as {method} and {host}.
@@ -92,7 +92,8 @@ https://example.com/report.lua. The use of the asterisk expands to any
 character sequence within a directory. The name of the matching script (it
 could be something like /www/report/weekly.lua based on your Cadddyfile) will
 be passed to the Lua interpreter. In this case, the Lua script does not need
-the shebang that would be needed in a standalone script.
+the shebang that would be needed in a standalone script. See the documentation
+for path/Match in the Go standard library for more details about glob matching.
 
 ##Advanced Syntax
 In order to specify custom environment variables or pass along the environment
@@ -122,5 +123,124 @@ cgi {
   pass_env key1 [key2...]
 }
 ```
+
+##Environment Variable Example
+In this example, the Caddyfile looks like this:
+
+```
+192.168.1.2:8080
+root /var/www
+cgi /show {root}/report/gen
+```
+
+Note that a request for /show gets mapped to a script named
+/var/www/report/gen. There is no need for any element of the script name to be
+the same as the match pattern.
+
+The script stored with the name /var/www/report/gen looks like this:
+
+```
+#!/bin/bash
+
+printf "Content-type: text/plain\n\n"
+
+printf "example error message\n" > /dev/stderr
+
+if [ "POST" = $REQUEST_METHOD -a -n $CONTENT_LENGTH ]; then
+  read -n $CONTENT_LENGTH POST_DATA
+fi
+
+printf "AUTH_TYPE         [%s]\n" $AUTH_TYPE
+printf "CONTENT_LENGTH    [%s]\n" $CONTENT_LENGTH
+printf "CONTENT_TYPE      [%s]\n" $CONTENT_TYPE
+printf "GATEWAY_INTERFACE [%s]\n" $GATEWAY_INTERFACE
+printf "PATH_INFO         [%s]\n" $PATH_INFO
+printf "PATH_TRANSLATED   [%s]\n" $PATH_TRANSLATED
+printf "POST_DATA         [%s]\n" $POST_DATA
+printf "QUERY_STRING      [%s]\n" $QUERY_STRING
+printf "REMOTE_ADDR       [%s]\n" $REMOTE_ADDR
+printf "REMOTE_HOST       [%s]\n" $REMOTE_HOST
+printf "REMOTE_IDENT      [%s]\n" $REMOTE_IDENT
+printf "REMOTE_USER       [%s]\n" $REMOTE_USER
+printf "REQUEST_METHOD    [%s]\n" $REQUEST_METHOD
+printf "SCRIPT_EXEC       [%s]\n" $SCRIPT_EXEC
+printf "SCRIPT_NAME       [%s]\n" $SCRIPT_NAME
+printf "SERVER_NAME       [%s]\n" $SERVER_NAME
+printf "SERVER_PORT       [%s]\n" $SERVER_PORT
+printf "SERVER_PROTOCOL   [%s]\n" $SERVER_PROTOCOL
+printf "SERVER_SOFTWARE   [%s]\n" $SERVER_SOFTWARE
+
+exit 0
+```
+
+The purpose of this script is to show how request information gets communicated
+to a CGI script. Note that POST data must be read from standard input. In this
+particular case, posted data gets stored in the variable POST_DATA. Your script
+may use a different method to read POST content. Secondly, the SCRIPT_EXEC
+variable is not a CGI standard. It is provided by this middleware and contains
+the entire command line, including all arguments, with which the CGI script was
+executed.
+
+When a browser requests
+
+```
+http://192.168.1.2:8080/show/weekly?mode=summary
+```
+
+the response looks like
+
+```
+AUTH_TYPE         []
+CONTENT_LENGTH    []
+CONTENT_TYPE      []
+GATEWAY_INTERFACE [CGI/1.1]
+PATH_INFO         [/weekly]
+PATH_TRANSLATED   []
+POST_DATA         []
+QUERY_STRING      [mode=summary]
+REMOTE_ADDR       [192.168.1.35]
+REMOTE_HOST       [192.168.1.35]
+REMOTE_IDENT      []
+REMOTE_USER       []
+REQUEST_METHOD    [GET]
+SCRIPT_EXEC       [/var/www/report/gen]
+SCRIPT_NAME       [/show]
+SERVER_NAME       [192.168.1.2:8080]
+SERVER_PORT       [8080]
+SERVER_PROTOCOL   [HTTP/1.1]
+SERVER_SOFTWARE   [go]
+```
+
+When a client makes a POST request, such as with the following command
+
+```
+wget -O - -q --post-data="city=San%20Francisco" http://192.168.1.2:8080/show/weekly?mode=summary
+```
+
+the response looks the same except for the following line:
+
+```
+POST_DATA         [city=San%20Francisco]
+```
+
+##Fossil Example
+The fossil distributed software management tool is a native executable that
+uses a single SQLite database for all of its storage. It uses CGI for one of
+its access methods. To set it up, use a cgi directive something like this in
+your Caddyfile:
+
+```
+cgi /cgi-bin/* {match}
+```
+
+In your cgi-bin directory, make a file named, say, repo with the following contents:
+
+```
+#!/usr/bin/fossil
+repository: /home/fossil/repo.fossil
+```
+
+Change the shebang line to reflect the location of the fossil executable, and the second line to reflect the
+location of your fossil repository.
 
 
