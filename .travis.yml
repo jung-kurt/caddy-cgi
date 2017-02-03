@@ -3,7 +3,7 @@ language: go
 sudo: false
 
 go:
-  - release
+  - 1.7.*
 
 os:
   - linux
