@@ -1,0 +1,199 @@
+nav {
+	overflow: hidden;
+}
+
+nav .menu {
+	position: absolute;
+	right: 0;
+	top: 5px;
+}
+
+#logo-link {
+	padding-left: 10px;
+}
+
+.nav {
+	position: fixed;
+	top: 65px;
+	bottom: 0;
+	overflow-y: scroll;
+	width: 25%;
+	max-width: 300px;
+	border-right: 1px solid #E0E0E0;
+	background: #FAFAFA;
+	padding: 20px;
+	font-size: 14px;
+	color: #555;
+	box-sizing: border-box;
+	padding-bottom: 2em;
+}
+
+.nav li {
+	padding: .25em;
+}
+
+.nav h6 {
+	color: #333;
+	font-size: 14px;
+}
+
+.nav a {
+	color: #888;
+	text-decoration: none;
+	display: block;
+}
+
+.nav a:hover {
+	color: #3BADE3;
+}
+
+.nav h6 {
+	font-weight: 500;
+}
+
+h1 {
+	font-size: 40px;
+	margin-bottom: 20px;
+}
+
+h2 {
+	margin-top: 50px;
+}
+
+h3 {
+	margin: 20px 0 10px;
+	font-weight: 600;
+}
+
+h3 + code,
+h3 + pre {
+	margin-top: 20px;
+}
+
+code + h3,
+pre + h3 {
+	margin-top: 40px;
+}
+
+main {
+	box-sizing: border-box;
+	margin: 65px 0 50px 25%;
+	padding: 50px 70px;
+	max-width: 800px;
+	display: block;
+}
+
+
+h1 .tag {
+	display: inline;
+	font-size: 12px;
+	vertical-align: middle;
+	font-weight: normal;
+	padding: 5px;
+}
+
+h1 .tag:first-child {
+	margin-left: 10px;
+}
+
+h1 .tag.addon,
+.addon-message,
+.nav a .addon {
+	background: #DBFFEA;
+}
+
+h1 .tag.addon,
+.addon-message .heading,
+.nav a .addon {
+	color: #05B674;
+}
+
+.addon-message {
+	color: #000;
+	padding: 10px;
+	margin: 10px 0;
+	font-size: 14px;
+	word-wrap: break-word;
+}
+
+.addon-message .heading {
+	margin-bottom: 5px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.nav a .addon {
+	margin-left: 5px;
+	display: inline-block;
+	padding: 0 4px 0 3px;
+	border-radius: 50%;
+	font-size: 10px;
+}
+
+/*
+.tag.purple {
+	background: #F5E1FF;
+	color: #A530A5;
+}
+*/
+
+
+footer {
+	color: #888;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 12px;
+	background: #FFF;
+	box-shadow: none;
+}
+
+@media (max-width: 900px) {
+	nav {
+		height: 50px;
+	}
+
+	nav .logo {
+		max-width: 85px;
+	}
+
+	nav a {
+		padding: 17px 15px;
+	}
+
+	.nav {
+		top: 50px;
+	}
+
+	main {
+		padding: 3%;
+		font-size: 16px;
+	}
+
+	h1 {
+		font-size: 30px;
+		margin-bottom: 10px;
+	}
+}
+
+@media (max-width: 600px) {
+	nav {
+		text-align: left;
+	}
+
+	.nav {
+		position: relative;
+		width: 100%;
+		max-width: none;
+		top: 0;
+	}
+
+	main {
+		margin-left: 0;
+		padding: 20px;
+		margin-bottom: 0;
+	}
+
+	h1 {
+		font-size: 24px;
+	}
+}
