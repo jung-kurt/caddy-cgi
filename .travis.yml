@@ -3,12 +3,16 @@ language: go
 sudo: false
 
 go:
-  - 1.7.2
+  - release
 
 os:
   - linux
   - osx
-            
+
+install:
+# Install all external dependencies, ensuring they are updated.
+- go get -u -v $(go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v golang-samples)
+
 script: go test -v ./...
 
 notifications:
