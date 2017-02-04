@@ -14,15 +14,15 @@ Package cgi implements the common gateway interface ([CGI][cgi-wiki]) for
 
 This plugin lets you generate dynamic content on your website by means of
 command line scripts. To collect information about the inbound HTTP request,
-examine certain environment variables such as `PATH_INFO` and `QUERY_STRING`.
-Then, to return a dynamically generated web page to the client, simply write
-content to standard output. In the case of POST requests, you read additional
-inbound content by means of the standard input.
+your script examines certain environment variables such as `PATH_INFO` and
+`QUERY_STRING`. Then, to return a dynamically generated web page to the client,
+your script simply writes content to standard output. In the case of POST
+requests, your script reads additional inbound content from standard input.
 
 The advantage of CGI is that you do not need to fuss with persistent server
 startup, long term memory management, sockets, and crash recovery. Your script
 is called when a request matches one the patterns that you specify in your
-Caddyfile. As soon as your script completes its response it terminates. This
+Caddyfile. As soon as your script completes its response, it terminates. This
 simplicity makes CGI a perfect complement to the straightforward operation and
 configuration of Caddy. The benefits of Caddy, including HTTPS by default,
 basic access authentication, and lots of middleware options extend easily to
@@ -45,7 +45,7 @@ generally be insignificant.
 
 ### Basic Syntax
 
-The cgi directive lets you associate one or more patterns with a particular
+The basic cgi directive lets you associate a single pattern with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
@@ -60,8 +60,8 @@ When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
 match and invoke the script named report that resides in the /usr/local/cgi-bin
 directory. Here, it is assumed that the script is self-contained, for example a
-pre-compiled CGI application or a shell script. An example of a standalone
-script, similar to one used in the cgi plugin's test suite, follows:
+pre-compiled CGI application or a shell script. Here is an example of a
+standalone script, similar to one used in the cgi plugin's test suite:
 
 	#!/bin/bash
 
@@ -76,9 +76,9 @@ environment variables or allow any environment variables that are part of
 Caddy's process to pass to your script, you will need to use the advanced
 directive syntax described below.
 
-Fields that follow the exec directive are subject to placeholder replacement.
-In addition to the standard Caddy placeholders such as `{method}` and `{host}`,
-the following placeholders substitutions are made:
+The values used for the script name and its arguments are subject to
+placeholder replacement. In addition to the standard Caddy placeholders such as
+`{method}` and `{host}`, the following placeholders substitutions are made:
 
 * **{.}** is replaced with Caddy's current working directory
 * **{match}** is replaced with the portion of the request that satisfied the match
@@ -136,6 +136,9 @@ the application level, the following syntax can be used:
 >   [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
 >   [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
 > }
+
+The values associated with environment variable keys are all subject to
+placeholder substitution, just as with the script name and arguments.
 
 ### Environment Variable Example
 
@@ -243,10 +246,15 @@ following single line:
 
 The fossil documentation calls this a command file. When fossil is invoked
 after a request to /projects, it examines the relevant environment variables
-and responds as a CGI application.
+and responds as a CGI application. If you protect /projects with 
+[basic HTTP autentication][auth], you may wish to enable the 
+**Allow REMOTE_USER authentication** option when setting up fossil. This lets
+fossil dispense with its own authentication, assuming it has an account for
+the user.
 
 [addon]: class:tag
 [arg]: class:hl-arg
+[auth]: https://caddyserver.com/docs/basicauth
 [badge-build]: https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master
 [badge-mit]: https://img.shields.io/badge/license-MIT-blue.svg
 [badge-report]: https://goreportcard.com/badge/github.com/jung-kurt/caddy-cgi
