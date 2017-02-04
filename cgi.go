@@ -40,7 +40,7 @@ func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 // setupCall instantiates a CGI handler based on the incoming request and the
 // configuration rule that it matches.
 func setupCall(h handlerType, rule ruleType, app appType,
-	lfStr, rtStr string, rep httpserver.Replacer) (cgiHnd cgi.Handler) {
+	lfStr, rtStr string, rep httpserver.Replacer, username string) (cgiHnd cgi.Handler) {
 	var scriptStr string
 	scriptStr = filepath.Join(h.root, lfStr)
 	cgiHnd.Root = "/"
@@ -48,6 +48,7 @@ func setupCall(h handlerType, rule ruleType, app appType,
 	rep.Set("root", h.root)
 	rep.Set("match", scriptStr)
 	cgiHnd.Path = rep.Replace(app.exe)
+	cgiHnd.Env = append(cgiHnd.Env, "REMOTE_USER="+username)
 	envAdd := func(key, val string) {
 		val = rep.Replace(val)
 		cgiHnd.Env = append(cgiHnd.Env, key+"="+val)
@@ -82,7 +83,7 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				ok, lfStr, rtStr := match(r.URL.Path, matchStr)
 				if ok {
 					var buf bytes.Buffer
-					cgiHnd := setupCall(h, rule, app, lfStr, rtStr, rep)
+					cgiHnd := setupCall(h, rule, app, lfStr, rtStr, rep, r.Header.Get("Authorized"))
 					cgiHnd.Stderr = &buf
 					cgiHnd.ServeHTTP(w, r)
 					if buf.Len() > 0 {
