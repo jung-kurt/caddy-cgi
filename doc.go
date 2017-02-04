@@ -77,7 +77,7 @@ You can include glob wildcards in your matches. See the documentation for
 path/Match in the Go standard library for more details about glob
 matching. Here is an example directive:
 
-	cgi /report/.lua /usr/bin/lua /usr/local/cgi-bin/{match}
+	cgi /report/*.lua /usr/bin/lua /usr/local/cgi-bin/{match}
 
 In this case, the cgi middleware will match requests such as
 https://example.com/report/weekly.lua and
