@@ -54,7 +54,10 @@ standalone script, similar to one used in the cgi plugin's test suite:
 	#!/bin/bash
 
 	printf "Content-type: text/plain\n\n"
-	printf "[%s %s %s %s %s]\n" $PATH_INFO $CGI_LOCAL $CGI_GLOBAL $1 $QUERY_STRING
+
+	printf "PATH_INFO    [%s]\n" $PATH_INFO
+	printf "QUERY_STRING [%s]\n" $QUERY_STRING
+
 	exit 0
 
 The environment variables PATH_INFO and QUERY_STRING are populated and
