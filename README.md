@@ -32,7 +32,7 @@ scripts take a long time to respond. However, in many cases, such as using a
 pre-compiled CGI application like fossil or a Lua script, the impact will
 generally be insignificant.
 
-**Important**: CGI scripts should be located outside of Caddy's document root.
+Important: CGI scripts should be located outside of Caddy's document root.
 Otherwise, an inadvertent misconfiguration could result in Caddy delivering
 the script as an ordinary static resource. At best, this could merely confuse
 the site visitor. At worst, it could expose sensitive internal information
@@ -44,7 +44,7 @@ The cgi directive lets you associate one or more patterns with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
-	cgi *match* *exec* [*args*...]
+	cgi match exec [args...]
 
 For example:
 
@@ -74,10 +74,10 @@ Fields that follow the exec directive are subject to placeholder replacement.
 In addition to the standard Caddy placeholders such as `{method}` and `{host}`,
 the following placeholders substitutions are made:
 
-* **{.}** is replaced with Caddy's current working directory
-* **{match}** is replaced with the portion of the request that satisfied the match
+ {.} is replaced with Caddy's current working directory
+ {match} is replaced with the portion of the request that satisfied the match
   directive
-* **{root}** is replaced with Caddy's specified root directory
+ {root} is replaced with Caddy's specified root directory
 
 You can include glob wildcards in your matches. See the documentation for
 [path/Match][match] in the Go standard library for more details about glob
@@ -110,9 +110,9 @@ variables known to Caddy, you will need to use the advanced directive syntax.
 That looks like this:
 
 	cgi {
-	  app *match* *script* [*args*...]
-	  env *key1=val1* [*key2=val2*...]
-	  pass_env *key1* [*key2*...]
+	  app match script [args...]
+	  env key1=val1 [key2=val2...]
+	  pass_env key1 [key2...]
 	}
 
 Each of the keywords app, env, and pass_env may be repeated. The env and
@@ -121,12 +121,12 @@ the application level, the following syntax can be used:
 
 	cgi {
 	  app {
-	    match *script* [*args*...]
-	    env *key1=val1* [*key2=val2*...]
-	    pass_env *key1* [*key2*...]
+	    match script [args...]
+	    env key1=val1 [key2=val2...]
+	    pass_env key1 [key2...]
 	  }
-	  env *key1=val1* [*key2=val2*...]
-	  pass_env *key1* [*key2*...]
+	  env key1=val1 [key2=val2...]
+	  pass_env key1 [key2...]
 	}
 
 ## Environment Variable Example

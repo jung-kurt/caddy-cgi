@@ -33,6 +33,9 @@ README.md : doc/index.md
 	-e 's/\[\([^]]*\)\]\[arg\]/\1/g' \
 	-e 's/\[\([^]]*\)\]\[dir\]/\1/g' \
 	-e 's/\[\([^]]*\)\]\[subdir\]/\1/g' \
+	-e 's/\*\.lua/\x01/g' \
+	-e 's/\*//g' \
+	-e 's/\x01/*.lua/g' \
 	$^ > $@
 
 doc.go : README.md
