@@ -124,7 +124,8 @@ the application level, the following syntax can be used:
 
 	cgi {
 	  app {
-	    match script [args...]
+	    match pattern [pattern2...]
+	    exec script [args...]
 	    env key1=val1 [key2=val2...]
 	    pass_env key1 [key2...]
 	  }

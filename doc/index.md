@@ -131,8 +131,9 @@ the application level, the following syntax can be used:
 
 > %code%
 > [cgi][dir] {
->   [app][arg] {
->     [match][subdir] [*script*][arg] [[*args*][arg]...]
+>   [app][subdir] {
+>     [match][subdir] [*pattern*][arg] [[*pattern2*][arg]...]
+>     [exec][subdir] [*script*][arg] [[*args*][arg]...]
 >     [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
 >     [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
 >   }
