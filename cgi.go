@@ -57,12 +57,10 @@ func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 // configuration rule that it matches.
 func setupCall(h handlerType, rule ruleType, app appType,
 	lfStr, rtStr string, rep httpserver.Replacer, username string) (cgiHnd cgi.Handler) {
-	var scriptStr string
-	scriptStr = filepath.Join(h.root, lfStr)
 	cgiHnd.Root = "/"
 	cgiHnd.Dir = h.root
 	rep.Set("root", h.root)
-	rep.Set("match", scriptStr)
+	rep.Set("match", lfStr)
 	cgiHnd.Path = rep.Replace(app.exe)
 	cgiHnd.Env = append(cgiHnd.Env, "REMOTE_USER="+username)
 	envAdd := func(key, val string) {
