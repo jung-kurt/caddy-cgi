@@ -53,15 +53,22 @@ func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 	return false, "", ""
 }
 
+// currentDir returns the current working directory
+func currentDir() (wdStr string) {
+	wdStr, _ = filepath.Abs(".")
+	return
+}
+
 // setupCall instantiates a CGI handler based on the incoming request and the
 // configuration rule that it matches.
-func setupCall(h handlerType, rule ruleType, app appType,
-	lfStr, rtStr string, rep httpserver.Replacer, username string) (cgiHnd cgi.Handler) {
+func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
+	rep httpserver.Replacer, username string) (cgiHnd cgi.Handler) {
 	cgiHnd.Root = "/"
 	cgiHnd.Dir = h.root
 	rep.Set("root", h.root)
 	rep.Set("match", lfStr)
-	cgiHnd.Path = rep.Replace(app.exe)
+	rep.Set(".", currentDir())
+	cgiHnd.Path = rep.Replace(rule.exe)
 	cgiHnd.Env = append(cgiHnd.Env, "REMOTE_USER="+username)
 	envAdd := func(key, val string) {
 		val = rep.Replace(val)
@@ -73,15 +80,15 @@ func setupCall(h handlerType, rule ruleType, app appType,
 	for _, env := range rule.envs {
 		envAdd(env[0], env[1])
 	}
-	for _, env := range app.envs {
+	for _, env := range rule.envs {
 		envAdd(env[0], env[1])
 	}
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
-	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, app.passEnvs...)
-	for _, str := range app.args {
+	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
+	for _, str := range rule.args {
 		cgiHnd.Args = append(cgiHnd.Args, rep.Replace(str))
 	}
 	envAdd("SCRIPT_EXEC", trim(sprintf("%s %s", cgiHnd.Path, join(cgiHnd.Args, " "))))
@@ -92,19 +99,17 @@ func setupCall(h handlerType, rule ruleType, app appType,
 func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int, err error) {
 	rep := httpserver.NewReplacer(r, nil, "")
 	for _, rule := range h.rules {
-		for _, app := range rule.apps {
-			for _, matchStr := range app.matches {
-				ok, lfStr, rtStr := match(r.URL.Path, matchStr)
-				if ok {
-					var buf bytes.Buffer
-					cgiHnd := setupCall(h, rule, app, lfStr, rtStr, rep, r.Header.Get("Authorized"))
-					cgiHnd.Stderr = &buf
-					cgiHnd.ServeHTTP(w, r)
-					if buf.Len() > 0 {
-						err = errors.New(trim(buf.String()))
-					}
-					return
+		for _, matchStr := range rule.matches {
+			ok, lfStr, rtStr := match(r.URL.Path, matchStr)
+			if ok {
+				var buf bytes.Buffer
+				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header.Get("Authorized"))
+				cgiHnd.Stderr = &buf
+				cgiHnd.ServeHTTP(w, r)
+				if buf.Len() > 0 {
+					err = errors.New(trim(buf.String()))
 				}
+				return
 			}
 		}
 	}

@@ -11,29 +11,17 @@ type handlerType struct {
 	root  string // same as root, but absolute path
 }
 
-// appType represents an application with arguments to execute when a rule is
-// matched
-type appType struct {
-	// Glob patterns to match in order to apply rule
-	matches []string // glob patterns
-	// Name of executable script or binary
-	exe string
-	// Arguments to submit to executable
-	args []string
-	// Environment key value pairs ([0]: key, [1]: value) for this particular app
-	// envs []keyValType
-	envs [][2]string
-	// Environment keys to pass through for this particular app
-	passEnvs []string
-}
-
 // ruleType represents a CGI handling rule; it is parsed from the cgi directive
 // in the Caddyfile
 type ruleType struct {
-	// Applications
-	apps []appType
+	// Glob patterns to match in order to apply rule
+	matches []string // glob patterns, [1..n]
+	// Name of executable script or binary
+	exe string // [1]
+	// Arguments to submit to executable
+	args []string // [0..n]
 	// Environment key value pairs ([0]: key, [1]: value) for this particular app
-	envs [][2]string
+	envs [][2]string // [0..n]
 	// Environment keys to pass through for all apps
-	passEnvs []string
+	passEnvs []string // [0..n]
 }

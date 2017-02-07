@@ -49,18 +49,11 @@ func TestServe(t *testing.T) {
 	var hnd handlerType
 	var srv *httptest.Server
 	directiveList := []string{
-		`cgi /servertime {root}/example`,
+		`cgi /servertime {.}/test/example`,
 		`cgi {
-  app /servertime {root}/example --example
+  match /servertime
+  exec {.}/test/example --example
   env CGI_GLOBAL=12
-}`,
-		`cgi {
-  app {
-    match /servertime
-    exec {root}/example
-	env CGI_LOCAL=14
-  }
-  env CGI_GLOBAL=14
 }`,
 	}
 
@@ -78,12 +71,7 @@ code [0], error [example error message]
 [12 --example   ]
 code [0], error [example error message]
 [/1930/05/11 12 --example name=Edsger%20W.%20Dijkstra ]
-code [0], error [example error message]
-[14 14   ]
-code [0], error [example error message]
-[/1930/05/11 14 14 name=Edsger%20W.%20Dijkstra ]
 `
-
 	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
 	// system call is made to respond to the request.
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {

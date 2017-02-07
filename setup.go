@@ -61,10 +61,10 @@ func setup(c *caddy.Controller) (err error) {
 }
 
 // parseExec parses an "exec" line
-func parseExec(app *appType, args []string) (err error) {
+func parseExec(rule *ruleType, args []string) (err error) {
 	if len(args) > 0 {
-		app.exe = args[0]
-		app.args = append(app.args, args[1:]...)
+		rule.exe = args[0]
+		rule.args = append(rule.args, args[1:]...)
 	} else {
 		err = errorf("expecting at least one argument to follow \"exec\"")
 	}
@@ -72,48 +72,11 @@ func parseExec(app *appType, args []string) (err error) {
 }
 
 // parseMatch parses a match line
-func parseMatch(app *appType, args []string) (err error) {
+func parseMatch(rule *ruleType, args []string) (err error) {
 	if len(args) > 0 {
-		app.matches = append(app.matches, args...)
+		rule.matches = append(rule.matches, args...)
 	} else {
 		err = errorf("expecting at least one argument to follow \"match\"")
-	}
-	return
-}
-
-// parseApp parses the brace-block following an "app" directive
-func parseApp(c *caddy.Controller) (app appType, err error) {
-	if c.Next() {
-		if c.Val() == "{" {
-			loop := true
-			for err == nil && loop && c.Next() {
-				val := c.Val()
-				args := c.RemainingArgs()
-				switch val {
-				case "exec":
-					err = parseExec(&app, args)
-				case "match":
-					err = parseMatch(&app, args)
-				case "env":
-					err = parseEnv(&app.envs, args)
-				case "pass_env":
-					app.passEnvs = append(app.passEnvs, args...)
-				case "}":
-					loop = false
-				}
-			}
-		} else {
-			errorf("expecting \"{\" in app block, got \"%s\"", c.Val())
-		}
-	} else {
-		err = errorf("expecting brace block to follow \"app\"")
-	}
-	if err == nil {
-		if len(app.matches) == 0 {
-			err = errorf("at least one pattern match must be specified for app")
-		} else if app.exe == "" {
-			err = errorf("an executable must be specified in app block")
-		}
 	}
 	return
 }
@@ -145,32 +108,22 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 				val := c.Val()
 				args := c.RemainingArgs()
 				switch val {
-				case "app":
-					var app appType
-					switch len(args) {
-					case 0: // brace block follows
-						app, err = parseApp(c)
-						if err == nil {
-							rule.apps = append(rule.apps, app)
-						}
-					case 1:
-						err = errorf("expecting \"app\" to follow simple syntax or advanced brace block syntax")
-					default:
-						app.matches = []string{args[0]}
-						app.exe = args[1]
-						app.args = append(app.args, args[2:]...)
-						rule.apps = append(rule.apps, app)
-					}
-				case "env":
+				case "match": // [1..n]
+					err = parseMatch(&rule, args)
+				case "exec": // [1]
+					err = parseExec(&rule, args)
+				case "env": // [0..n]
 					err = parseEnv(&rule.envs, args)
-				case "pass_env":
+				case "pass_env": // [0..n]
 					rule.passEnvs = append(rule.passEnvs, args...)
 				case "}":
 					loop = false
 				}
 			}
-			if len(rule.apps) == 0 {
-				err = errorf("block must contain at least one application")
+			if len(rule.matches) == 0 {
+				err = errorf("block must contain at least one \"match\" subdirective")
+			} else if rule.exe == "" {
+				err = errorf("block must contain an \"exec\" subdirective")
 			}
 		} else {
 			err = errorf("expecting \"{\", got \"%s\"", c.Val())
@@ -186,6 +139,7 @@ func cgiParse(c *caddy.Controller) (rules []ruleType, err error) {
 	for err == nil && c.Next() {
 		val := c.Val()
 		args := c.RemainingArgs()
+		// printf("Line %2d: [%s] [%s]\n", c.Line(), val, join(args, ", "))
 		if val == "cgi" {
 			if len(args) == 0 { // advanced brace-block syntax
 				var rule ruleType
@@ -193,12 +147,12 @@ func cgiParse(c *caddy.Controller) (rules []ruleType, err error) {
 				if err == nil {
 					rules = append(rules, rule)
 				}
-			} else if len(args) >= 2 { // simple one-line syntax
-				rules = append(rules, ruleType{apps: []appType{{
+			} else if len(args) >= 2 { // simple one-line syntax: one match, exe, args
+				rules = append(rules, ruleType{
 					matches: []string{args[0]},
 					exe:     args[1],
 					args:    args[2:],
-				}}})
+				})
 			} else {
 				err = errorf("expecting at least 2 arguments for simple directive, got %d", len(args))
 			}

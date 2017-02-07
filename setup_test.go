@@ -50,57 +50,55 @@ func configure(expectErr bool, str string) (rules []ruleType, err error) {
 func Example_rule() {
 	var err error
 	var rules []ruleType
-	var str = `cgi {
-  app {
-    match *.lua *.luac
-    exec /usr/bin/lua
-    pass_env LUA_PATH LUA_CPATH
-  }
-  app {
-    match *.py *.pyc
-    exec /usr/bin/python -s
-    env PYTHONSTARTUP=/usr/share/init.py
-  }
-  app {
-    match /fossil 
-	exec /var/www/fossil
-  }
-  app {
-    match /report/week 
-	exec /var/www/report --mode=week
-  }
+	var strList = []string{
+		`cgi {
+  match *.lua *.luac
+  exec /usr/bin/lua /usr/local/cgi-bin/{match}
+  pass_env LUA_PATH LUA_CPATH
+ }`,
+		`cgi {
+  match *.py *.pyc
+  exec /usr/bin/python -s
+  env PYTHONSTARTUP=/usr/share/init.py
+ }`,
+		`cgi /fossil /var/www/fossil`,
+		`cgi {
+  match /report/week
+  exec /var/www/report --mode=week
   env NO_BANANAS=YES "NAME = Don Quixote" 
   env MODE=DEV
   pass_env JWT_SECRET
-}`
-
-	rules, err = configure(false, str)
-	if err == nil {
-		printRules(rules)
-	} else {
-		printf("%s\n", err)
+}`,
+	}
+	for _, str := range strList {
+		rules, err = configure(false, str)
+		if err == nil {
+			printRules(rules)
+		} else {
+			printf("%s\n", err)
+		}
 	}
 	// Output:
 	// Rule 0
-	//   App 0
-	//     Match 0: *.lua
-	//     Match 1: *.luac
-	//     Exe: /usr/bin/lua
-	//     Pass env 0: LUA_PATH
-	//     Pass env 1: LUA_CPATH
-	//   App 1
-	//     Match 0: *.py
-	//     Match 1: *.pyc
-	//     Exe: /usr/bin/python
-	//     Arg 0: -s
-	//     Env 0: PYTHONSTARTUP=[/usr/share/init.py]
-	//   App 2
-	//     Match 0: /fossil
-	//     Exe: /var/www/fossil
-	//   App 3
-	//     Match 0: /report/week
-	//     Exe: /var/www/report
-	//     Arg 0: --mode=week
+	//   Match 0: *.lua
+	//   Match 1: *.luac
+	//   Exe: /usr/bin/lua
+	//   Arg 0: /usr/local/cgi-bin/{match}
+	//   Pass env 0: LUA_PATH
+	//   Pass env 1: LUA_CPATH
+	// Rule 0
+	//   Match 0: *.py
+	//   Match 1: *.pyc
+	//   Exe: /usr/bin/python
+	//   Arg 0: -s
+	//   Env 0: PYTHONSTARTUP=[/usr/share/init.py]
+	// Rule 0
+	//   Match 0: /fossil
+	//   Exe: /var/www/fossil
+	// Rule 0
+	//   Match 0: /report/week
+	//   Exe: /var/www/report
+	//   Arg 0: --mode=week
 	//   Env 0: NO_BANANAS=[YES]
 	//   Env 1: NAME=[Don Quixote]
 	//   Env 2: MODE=[DEV]
@@ -116,59 +114,55 @@ func TestSetup(t *testing.T) {
 		`0:cgi /report/daily /usr/bin/perl /usr/share/perl/report --mode=daily`,
 
 		`0:cgi {
-  app {
-    match *.lua *.luac
-    exec /usr/bin/lua
-    pass_env LUA_PATH LUA_CPATH
-  }
-  app {
-    match *.py *.pyc
-    exec /usr/bin/python -s
-    env PYTHONSTARTUP=/usr/share/init.py
-  }
-  app {
-    match /fossil 
-	exec /var/www/fossil
-  }
-  app {
-    match /report/week 
-	exec /var/www/report --mode=week
-  }
+  match *.lua *.luac
+  exec /usr/bin/lua /usr/local/cgi-bin/{match}
+  pass_env LUA_PATH LUA_CPATH
+ }
+ cgi {
+   match *.py *.pyc
+   exec /usr/bin/python -s /usr/local/cgi-bin/{match}
+   env PYTHONSTARTUP=/usr/share/init.py
+}
+cgi {
+  match /fossil 
+  exec /var/www/fossil /usr/local/cgi-bin/fossil
+}
+cgi {
+  match /report/week 
+  exec /usr/local/cgi-bin/report --mode=week
   env NO_BANANAS=YES "NAME = Don Quixote" 
   env MODE=DEV
   pass_env JWT_SECRET
 }`,
 
-		`0:cgi {
-  app /foo /foo/script -a
+		`1:cgi {
+  match /foo /foo/script -a
 }`,
 
 		`1:cgi {
-  app /foo
+  match /foo
 }`,
 
 		`1:cgi {
-  app {
-    match *.lua *.luac
-  }
+  match *.lua *.luac
 }`,
 
 		`1:cgi {
-  app {
-    match /*.pl
-    exec
-  }
+  match /*.pl
+  exec
 }`,
 
 		`1:cgi {
-  app {
-    match
-    exec /usr/bin/perl
-  }
+  match
+  exec /usr/bin/perl
 }`,
 
 		`1:cgi {
-  app
+  match
+`,
+
+		`1:cgi {
+  exec
 `,
 
 		`1:cgi /report/daily /usr/bin/perl /usr/share/perl/report --mode=daily
@@ -178,15 +172,21 @@ func TestSetup(t *testing.T) {
 		`1:cgi`,
 
 		`1:cgi
-  app`,
+  env`,
 
 		`1:cgi {
-    env NO_BANANAS:MAYBE
-  }`,
+  env NO_BANANAS:MAYBE
+ }`,
 
 		`1:cgi {
-  app
-  app /foo /bin/foo`,
+  match
+  match /foo /bin/foo`,
+
+		`1:cgi {
+  match /report
+  exe /usr/local/bin/foo
+  exe /usr/local/bin/bar
+}`,
 
 		`1:cgi /report/daily`,
 	}
@@ -194,6 +194,9 @@ func TestSetup(t *testing.T) {
 	for j := 0; j < len(directiveList) && err == nil; j++ {
 		str := directiveList[j]
 		_, err = configure(str[0:1] != "0", str[2:])
+		if err != nil {
+			printf("error [%s], str [%s]\n", err.Error(), str)
+		}
 	}
 	if err != nil {
 		t.Fatal(err)

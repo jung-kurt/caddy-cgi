@@ -20,27 +20,18 @@ func unused(args ...interface{}) {
 func printRules(rules []ruleType) {
 	for j, r := range rules {
 		printf("Rule %d\n", j)
-		for k, app := range r.apps {
-			printf("  App %d\n", k)
-			for l, match := range app.matches {
-				printf("    Match %d: %s\n", l, match)
-			}
-			printf("    Exe: %s\n", app.exe)
-			for l, str := range app.args {
-				printf("    Arg %d: %s\n", l, str)
-			}
-			for l, env := range app.envs {
-				printf("    Env %d: %s=[%s]\n", l, env[0], env[1])
-			}
-			for l, str := range app.passEnvs {
-				printf("    Pass env %d: %s\n", l, str)
-			}
+		for k, match := range r.matches {
+			printf("  Match %d: %s\n", k, match)
 		}
-		for l, env := range r.envs {
-			printf("  Env %d: %s=[%s]\n", l, env[0], env[1])
+		printf("  Exe: %s\n", r.exe)
+		for k, str := range r.args {
+			printf("  Arg %d: %s\n", k, str)
 		}
-		for l, str := range r.passEnvs {
-			printf("  Pass env %d: %s\n", l, str)
+		for k, env := range r.envs {
+			printf("  Env %d: %s=[%s]\n", k, env[0], env[1])
+		}
+		for k, str := range r.passEnvs {
+			printf("  Pass env %d: %s\n", k, str)
 		}
 	}
 }
