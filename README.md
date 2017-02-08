@@ -225,6 +225,8 @@ When a client makes a POST request, such as with the following command
 
 the response looks the same except for the following lines:
 
+	CONTENT_LENGTH    [20]
+	CONTENT_TYPE      [application/x-www-form-urlencoded]
 	POST_DATA         [city=San%20Francisco]
 	REQUEST_METHOD    [POST]
 
