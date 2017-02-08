@@ -43,6 +43,18 @@ generally be insignificant.
 > the site visitor. At worst, it could expose sensitive internal information
 > that should not leave the server.
 
+Your CGI application can be executed directly or indirectly. In the direct
+case, the application can be a compiled native executable or it can be a shell
+script that contains as its first line a shebang that identifies the
+interpreter to which the file's name should be passed. Caddy must have
+permission to execute the application. On Posix systems this will mean making
+sure the application's ownership and permission bits are set appropriately; on
+Windows, this may involve properly setting up the filename extension
+association.
+
+In the indirect case, the name of the CGI script is passed to an interpeter
+such as lua, perl or python.
+
 ### Basic Syntax
 
 The basic cgi directive lets you associate a single pattern with a particular
@@ -58,10 +70,10 @@ For example:
 
 When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
-match and invoke the script named report that resides in the /usr/local/cgi-bin
-directory. Here, it is assumed that the script is self-contained, for example a
-pre-compiled CGI application or a shell script. Here is an example of a
-standalone script, similar to one used in the cgi plugin's test suite:
+match and invoke the script named /usr/local/cgi-bin/report. Here, it is
+assumed that the script is self-contained, for example a pre-compiled CGI
+application or a shell script. Here is an example of a standalone script,
+similar to one used in the cgi plugin's test suite:
 
 	#!/bin/bash
 
@@ -84,7 +96,7 @@ placeholder replacement. In addition to the standard Caddy placeholders such as
 `{method}` and `{host}`, the following placeholders substitutions are made:
 
 * **{.}** is replaced with Caddy's current working directory
-* **{match}** is replaced with the portion of the request that satisfied the match
+* **{match}** is replaced with the portion of the request that satisfies the match
   directive
 * **{root}** is replaced with Caddy's specified root directory
 
@@ -114,32 +126,22 @@ This method facilitates the use of CGI on the Windows platform.
 
 ### Advanced Syntax
 
-In order to specify custom environment variables or pass along the environment
-variables known to Caddy, you will need to use the advanced directive syntax.
-That looks like this:
+In order to specify custom environment variables, pass along one or more
+environment variables known to Caddy, or specify more than one match pattern
+for a given rule, you will need to use the advanced directive syntax. That
+looks like this:
 
 > %code%
 > [cgi][dir] {
->   [app][subdir] [*match*][arg] [*script*][arg] [[*args*][arg]...]
+>   [match][subdir] [*match*][arg] [[*match2][arg]...]
+>   [exec][subdir] [*script*][arg] [[*args*][arg]...]
 >   [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
 >   [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
 > }
 
-Each of the keywords app, env, and pass_env may be repeated. The env and
-pass_env lines are optional. If you wish to control environment variables at
-the application level, the following syntax can be used:
-
-> %code%
-> [cgi][dir] {
->   [app][subdir] {
->     [match][subdir] [*pattern*][arg] [[*pattern2*][arg]...]
->     [exec][subdir] [*script*][arg] [[*args*][arg]...]
->     [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
->     [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
->   }
->   [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
->   [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
-> }
+With the advanced syntax, the `exec` subdirective must appear exactly once. The
+`match` subdirective must appear at least once. The `env` and `pass_env`
+subdirectives can appear any reasonable number of times.
 
 The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.

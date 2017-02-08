@@ -60,6 +60,18 @@ the script as an ordinary static resource. At best, this could merely confuse
 the site visitor. At worst, it could expose sensitive internal information
 that should not leave the server.</mark></p>
 
+<p>Your CGI application can be executed directly or indirectly. In the direct
+case, the application can be a compiled native executable or it can be a shell
+script that contains as its first line a shebang that identifies the
+interpreter to which the file&rsquo;s name should be passed. Caddy must have
+permission to execute the application. On Posix systems this will mean making
+sure the application&rsquo;s ownership and permission bits are set appropriately; on
+Windows, this may involve properly setting up the filename extension
+association.</p>
+
+<p>In the indirect case, the name of the CGI script is passed to an interpeter
+such as lua, perl or python.</p>
+
 <h3>Basic Syntax</h3>
 
 <p>The basic cgi directive lets you associate a single pattern with a particular
@@ -75,10 +87,10 @@ the basic syntax:</p>
 
 <p>When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
-match and invoke the script named report that resides in the /usr/local/cgi-bin
-directory. Here, it is assumed that the script is self-contained, for example a
-pre-compiled CGI application or a shell script. Here is an example of a
-standalone script, similar to one used in the cgi plugin&rsquo;s test suite:</p>
+match and invoke the script named /usr/local/cgi-bin/report. Here, it is
+assumed that the script is self-contained, for example a pre-compiled CGI
+application or a shell script. Here is an example of a standalone script,
+similar to one used in the cgi plugin&rsquo;s test suite:</p>
 
 <pre><code>#!/bin/bash
 
@@ -103,7 +115,7 @@ placeholder replacement. In addition to the standard Caddy placeholders such as
 
 <ul>
 <li><strong>{.}</strong> is replaced with Caddy&rsquo;s current working directory</li>
-<li><strong>{match}</strong> is replaced with the portion of the request that satisfied the match
+<li><strong>{match}</strong> is replaced with the portion of the request that satisfies the match
 directive</li>
 <li><strong>{root}</strong> is replaced with Caddy&rsquo;s specified root directory</li>
 </ul>
@@ -138,30 +150,21 @@ This method facilitates the use of CGI on the Windows platform.</p>
 
 <h3>Advanced Syntax</h3>
 
-<p>In order to specify custom environment variables or pass along the environment
-variables known to Caddy, you will need to use the advanced directive syntax.
-That looks like this:</p>
+<p>In order to specify custom environment variables, pass along one or more
+environment variables known to Caddy, or specify more than one match pattern
+for a given rule, you will need to use the advanced directive syntax. That
+looks like this:</p>
 
 <p><code class="block"><span class="hl-directive">cgi</span> {
-  <span class="hl-subdirective">app</span> <span class="hl-arg"><em>match</em></span> <span class="hl-arg"><em>script</em></span> [<span class="hl-arg"><em>args</em></span>&hellip;]
+  <span class="hl-subdirective">match</span> <span class="hl-arg"><em>match</em></span> [<span class="hl-arg">*match2</span>&hellip;]
+  <span class="hl-subdirective">exec</span> <span class="hl-arg"><em>script</em></span> [<span class="hl-arg"><em>args</em></span>&hellip;]
   <span class="hl-subdirective">env</span> <span class="hl-arg"><em>key1=val1</em></span> [<span class="hl-arg"><em>key2=val2</em></span>&hellip;]
   <span class="hl-subdirective">pass_env</span> <span class="hl-arg"><em>key1</em></span> [<span class="hl-arg"><em>key2</em></span>&hellip;]
 }</code></p>
 
-<p>Each of the keywords app, env, and pass_env may be repeated. The env and
-pass_env lines are optional. If you wish to control environment variables at
-the application level, the following syntax can be used:</p>
-
-<p><code class="block"><span class="hl-directive">cgi</span> {
-  <span class="hl-subdirective">app</span> {
-    <span class="hl-subdirective">match</span> <span class="hl-arg"><em>pattern</em></span> [<span class="hl-arg"><em>pattern2</em></span>&hellip;]
-    <span class="hl-subdirective">exec</span> <span class="hl-arg"><em>script</em></span> [<span class="hl-arg"><em>args</em></span>&hellip;]
-    <span class="hl-subdirective">env</span> <span class="hl-arg"><em>key1=val1</em></span> [<span class="hl-arg"><em>key2=val2</em></span>&hellip;]
-    <span class="hl-subdirective">pass_env</span> <span class="hl-arg"><em>key1</em></span> [<span class="hl-arg"><em>key2</em></span>&hellip;]
-  }
-  <span class="hl-subdirective">env</span> <span class="hl-arg"><em>key1=val1</em></span> [<span class="hl-arg"><em>key2=val2</em></span>&hellip;]
-  <span class="hl-subdirective">pass_env</span> <span class="hl-arg"><em>key1</em></span> [<span class="hl-arg"><em>key2</em></span>&hellip;]
-}</code></p>
+<p>With the advanced syntax, the <code>exec</code> subdirective must appear exactly once. The
+<code>match</code> subdirective must appear at least once. The <code>env</code> and <code>pass_env</code>
+subdirectives can appear any reasonable number of times.</p>
 
 <p>The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.</p>
