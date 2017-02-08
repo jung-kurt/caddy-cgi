@@ -239,8 +239,8 @@ following single line:
 
 The fossil documentation calls this a command file. When fossil is invoked
 after a request to /projects, it examines the relevant environment variables
-and responds as a CGI application. If you protect /projects with 
-basic HTTP autentication, you may wish to enable the 
+and responds as a CGI application. If you protect /projects with
+basic HTTP autentication, you may wish to enable the
 Allow REMOTE_USER authentication option when setting up fossil. This lets
 fossil dispense with its own authentication, assuming it has an account for
 the user.

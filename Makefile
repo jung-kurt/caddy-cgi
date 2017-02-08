@@ -53,6 +53,7 @@ doc.go : README.md
 	-e '/./,$$!d' \
 	$^ >> $@
 	printf "\n*/\npackage cgi\n" >> $@
+	gofmt -w -s $@
 
 clean :
 	rm -f doc/mid*txt README.md doc.go root/index.html
