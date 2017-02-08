@@ -62,7 +62,7 @@ script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
 > %code%
-> cgi [*match*][dir] [*exec*][arg] [[*args*][arg]...]
+> [cgi][dir] [*match*][arg] [*exec*][arg] [[*args*][arg]...]
 
 For example:
 
@@ -133,7 +133,7 @@ looks like this:
 
 > %code%
 > [cgi][dir] {
->   [match][subdir] [*match*][arg] [[*match2][arg]...]
+>   [match][subdir] [*match*][arg] [[*match2*][arg]...]
 >   [exec][subdir] [*script*][arg] [[*args*][arg]...]
 >   [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
 >   [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
