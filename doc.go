@@ -4,10 +4,11 @@ Caddy, a modern, full-featured, easy-to-use web server.
 
 This plugin lets you generate dynamic content on your website by means of
 command line scripts. To collect information about the inbound HTTP request,
-your script examines certain environment variables such as PATH_INFO and
-QUERY_STRING. Then, to return a dynamically generated web page to the client,
-your script simply writes content to standard output. In the case of POST
-requests, your script reads additional inbound content from standard input.
+your script examines certain environment variables such as
+PATH_INFO and QUERY_STRING. Then, to return a dynamically
+generated web page to the client, your script simply writes content to standard
+output. In the case of POST requests, your script reads additional inbound
+content from standard input.
 
 The advantage of CGI is that you do not need to fuss with persistent server
 startup, long term memory management, sockets, and crash recovery. Your script
@@ -83,10 +84,10 @@ The values used for the script name and its arguments are subject to
 placeholder replacement. In addition to the standard Caddy placeholders such as
 {method} and {host}, the following placeholders substitutions are made:
 
- {.} is replaced with Caddy's current working directory
- {match} is replaced with the portion of the request that satisfies the match
+• {.} is replaced with Caddy's current working directory
+• {match} is replaced with the portion of the request that satisfies the match
   directive
- {root} is replaced with Caddy's specified root directory
+• {root} is replaced with Caddy's specified root directory
 
 You can include glob wildcards in your matches. See the documentation for
 path/Match in the Go standard library for more details about glob
@@ -242,11 +243,10 @@ following single line:
 The fossil documentation calls this a command file. When fossil is invoked
 after a request to /projects, it examines the relevant environment variables
 and responds as a CGI application. If you protect /projects with
-basic HTTP autentication, you may wish to enable the
+basic HTTP authentication, you may wish to enable the
 Allow REMOTE_USER authentication option when setting up fossil. This lets
 fossil dispense with its own authentication, assuming it has an account for
 the user.
-
 
 */
 package cgi

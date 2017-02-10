@@ -1,12 +1,25 @@
+~r~
 # cgi
 
 [![MIT licensed][badge-mit]][license]
 [![Build Status][badge-build]][travis]
 [![Report][badge-report]][report]
 
+~c~
+---
+title: basicauth
+type: docs
+directive: true
+---
+
+cgi implements the common gateway interface ([CGI][cgi-wiki]). This directive
+may be used multiple times with different match patterns.
+
+~rg~
 Package cgi implements the common gateway interface ([CGI][cgi-wiki]) for
 [Caddy][caddy], a modern, full-featured, easy-to-use web server.
 
+~rgc~
 This plugin lets you generate dynamic content on your website by means of
 command line scripts. To collect information about the inbound HTTP request,
 your script examines certain environment variables such as
@@ -57,7 +70,7 @@ script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
 <code class="block">
-<span class="hl-directive">cgi</span> <span class="hl-arg">*match*</span> <span class="hl-arg">*exec*</span> <span class="hl-arg">[*args*</span>...]
+[cgi][dir] [*match*][arg] [*exec*][arg] [[*args*][arg]...]
 </code>
 
 For example:
@@ -128,11 +141,11 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
 <code class="block">
-<span class="hl-directive">cgi</span> {
-  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*</span>...]
-  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*</span>...]
-  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*</span>...]
-  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*</span>...]
+[cgi][dir] {
+  [match][subdir] [*match*][arg] [[*match2*][arg]...]
+  [exec][subdir] [*script*][arg] [[*args*][arg]...]
+  [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
+  [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
 }
 </code>
 
@@ -257,6 +270,7 @@ and responds as a CGI application. If you protect /projects with
 fossil dispense with its own authentication, assuming it has an account for
 the user.
 
+~cr~
 [auth]: https://caddyserver.com/docs/basicauth
 [badge-build]: https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master
 [badge-mit]: https://img.shields.io/badge/license-MIT-blue.svg
