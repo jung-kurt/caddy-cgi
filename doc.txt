@@ -143,11 +143,11 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
 <code class="block">
-<span class="hl-directive">cgi</span> {
-  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*...]</span>
-  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*...]</span>
-  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*...]</span>
-  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*...]</span>
+<span class="hl-directive">cgi</span> {<br>
+  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*...]</span><br>
+  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*...]</span><br>
+  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*...]</span><br>
+  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*...]</span><br>
 }
 </code>
 

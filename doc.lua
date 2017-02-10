@@ -13,12 +13,6 @@ local function write(filestr, str)
 	end
 end
 
--- local function span(str, abbr, class)
---	return gsub(str, '%[([^%]]+)%]%[' .. abbr .. '%]', function(substr)
---		return '<span class="' .. class .. '">' .. substr .. '</span>'
---	end)
--- end
-
 local function codeblock(tbl) 
 	local newtbl = {}
 	local incode = false
@@ -39,19 +33,12 @@ end
 
 
 local function caddywrite(tbl)
-	-- codeblock(tbl)
 	local str = concat(tbl, '\n')
-	-- str = span(str, 'arg', 'hl-arg')
-	-- str = span(str, 'dir', 'hl-directive')
-	-- str = span(str, 'subdir', 'hl-subdirective')
 	write('cgi.md', str)
 end
 
 local function readmewrite(tbl)
 	local str = concat(tbl, '\n')
-	-- str = span(str, 'arg', 'hl-arg')
-	-- str = span(str, 'dir', 'hl-directive')
-	-- str = span(str, 'subdir', 'hl-subdirective')
 	write('README.md', str)
 end
 
