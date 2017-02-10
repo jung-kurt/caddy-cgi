@@ -34,11 +34,11 @@ scripts take a long time to respond. However, in many cases, such as using a
 pre-compiled CGI application like fossil or a Lua script, the impact will
 generally be insignificant.
 
-**Important**: CGI scripts should be located outside of Caddy's document root.
+<mark class="block">**Important**: CGI scripts should be located outside of Caddy's document root.
 Otherwise, an inadvertent misconfiguration could result in Caddy delivering
 the script as an ordinary static resource. At best, this could merely confuse
 the site visitor. At worst, it could expose sensitive internal information
-that should not leave the server.
+that should not leave the server.</mark>
 
 Your CGI application can be executed directly or indirectly. In the direct
 case, the application can be a compiled native executable or it can be a shell

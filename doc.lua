@@ -34,6 +34,7 @@ end
 
 local function caddywrite(tbl)
 	local str = concat(tbl, '\n')
+	str = gsub(str, '\n\n(%*%*.-)\n\n', '\n\n<mark class="block">%1</mark>\n\n')
 	write('cgi.md', str)
 end
 
