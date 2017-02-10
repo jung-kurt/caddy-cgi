@@ -13,11 +13,11 @@ local function write(filestr, str)
 	end
 end
 
-local function span(str, abbr, class)
-	return gsub(str, '%[([^%]]+)%]%[' .. abbr .. '%]', function(substr)
-		return '<span class="' .. class .. '">' .. substr .. '</span>'
-	end)
-end
+-- local function span(str, abbr, class)
+--	return gsub(str, '%[([^%]]+)%]%[' .. abbr .. '%]', function(substr)
+--		return '<span class="' .. class .. '">' .. substr .. '</span>'
+--	end)
+-- end
 
 local function codeblock(tbl) 
 	local newtbl = {}
@@ -39,19 +39,19 @@ end
 
 
 local function caddywrite(tbl)
-	codeblock(tbl)
+	-- codeblock(tbl)
 	local str = concat(tbl, '\n')
-	str = span(str, 'arg', 'hl-arg')
-	str = span(str, 'dir', 'hl-directive')
-	str = span(str, 'subdir', 'hl-subdirective')
+	-- str = span(str, 'arg', 'hl-arg')
+	-- str = span(str, 'dir', 'hl-directive')
+	-- str = span(str, 'subdir', 'hl-subdirective')
 	write('cgi.md', str)
 end
 
 local function readmewrite(tbl)
 	local str = concat(tbl, '\n')
-	str = span(str, 'arg', 'hl-arg')
-	str = span(str, 'dir', 'hl-directive')
-	str = span(str, 'subdir', 'hl-subdirective')
+	-- str = span(str, 'arg', 'hl-arg')
+	-- str = span(str, 'dir', 'hl-directive')
+	-- str = span(str, 'subdir', 'hl-subdirective')
 	write('README.md', str)
 end
 
@@ -66,6 +66,7 @@ local function godocwrite(tbl)
 	str = gsub(str, '/%*%.', '\v')
 	str = gsub(str, '%*', '')
 	str = gsub(str, '\v', '/*.')
+	str = gsub(str, '%b<>', '')
 	-- replace [foo][bar] with foo
 	str = gsub(str, '%[(%C-)%]%[%C-%]', '%1')
 	str = '/*\n' .. str .. '\n*/\npackage cgi\n'

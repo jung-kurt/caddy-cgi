@@ -7,9 +7,11 @@
 
 ~c~
 ---
-title: basicauth
+title: cgi
 type: docs
 directive: true
+plugin: true
+link: https://github.com/jung-kurt/caddy-cgi
 ---
 
 cgi implements the common gateway interface ([CGI][cgi-wiki]). This directive
@@ -70,7 +72,7 @@ script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
 <code class="block">
-[cgi][dir] [*match*][arg] [*exec*][arg] [[*args*][arg]...]
+<span class="hl-directive">cgi</span> <span class="hl-arg">*match*</span> <span class="hl-arg">*exec*</span> <span class="hl-arg">[*args*...]</span>
 </code>
 
 For example:
@@ -141,11 +143,11 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
 <code class="block">
-[cgi][dir] {
-  [match][subdir] [*match*][arg] [[*match2*][arg]...]
-  [exec][subdir] [*script*][arg] [[*args*][arg]...]
-  [env][subdir] [*key1=val1*][arg] [[*key2=val2*][arg]...]
-  [pass_env][subdir] [*key1*][arg] [[*key2*][arg]...]
+<span class="hl-directive">cgi</span> {
+  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*...]</span>
+  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*...]</span>
+  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*...]</span>
+  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*...]</span>
 }
 </code>
 
