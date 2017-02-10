@@ -38,7 +38,9 @@ local function caddywrite(tbl)
 end
 
 local function readmewrite(tbl)
+	tbl = codeblock(tbl)
 	local str = concat(tbl, '\n')
+	str = gsub(str, '%b<>', '')
 	write('README.md', str)
 end
 

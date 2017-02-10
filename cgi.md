@@ -59,7 +59,7 @@ script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
 <code class="block">
-<span class="hl-directive">cgi</span> <span class="hl-arg">*match*</span> <span class="hl-arg">*exec*</span> <span class="hl-arg">[*args*...]</span>
+<span class="hl-directive">cgi</span> <span class="hl-arg"><em>match</em></span> <span class="hl-arg"><em>exec</em></span> <span class="hl-arg">[<em>args</em>...]</span>
 </code>
 
 For example:
@@ -130,11 +130,11 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
 <code class="block">
-<span class="hl-directive">cgi</span> {<br>
-  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*...]</span><br>
-  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*...]</span><br>
-  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*...]</span><br>
-  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*...]</span><br>
+<span class="hl-directive">cgi</span> {
+  <span class="hl-subdirective">match</span> <span class="hl-arg"><em>match</em></span> <span class="hl-arg">[<em>match2</em>...]</span>
+  <span class="hl-subdirective">exec</span> <span class="hl-arg"><em>script</em></span> <span class="hl-arg">[<em>args</em>...]</span>
+  <span class="hl-subdirective">env</span> <span class="hl-arg"><em>key1=val1</em></span> <span class="hl-arg">[<em>key2=val2</em>...]</span>
+  <span class="hl-subdirective">pass_env</span> <span class="hl-arg"><em>key1</em></span> <span class="hl-arg">[<em>key2</em>...]</span>
 }
 </code>
 

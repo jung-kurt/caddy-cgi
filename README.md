@@ -56,9 +56,7 @@ The basic cgi directive lets you associate a single pattern with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
-<code class="block">
-<span class="hl-directive">cgi</span> <span class="hl-arg">*match*</span> <span class="hl-arg">*exec*</span> <span class="hl-arg">[*args*...]</span>
-</code>
+	cgi match exec [args...]
 
 For example:
 
@@ -127,14 +125,12 @@ environment variables known to Caddy, or specify more than one match pattern
 for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
-<code class="block">
-<span class="hl-directive">cgi</span> {<br>
-  <span class="hl-subdirective">match</span> <span class="hl-arg">*match*</span> <span class="hl-arg">[*match2*...]</span><br>
-  <span class="hl-subdirective">exec</span> <span class="hl-arg">*script*</span> <span class="hl-arg">[*args*...]</span><br>
-  <span class="hl-subdirective">env</span> <span class="hl-arg">*key1=val1*</span> <span class="hl-arg">[*key2=val2*...]</span><br>
-  <span class="hl-subdirective">pass_env</span> <span class="hl-arg">*key1*</span> <span class="hl-arg">[*key2*...]</span><br>
-}
-</code>
+	cgi {
+	  match match [match2...]
+	  exec script [args...]
+	  env key1=val1 [key2=val2...]
+	  pass_env key1 [key2...]
+	}
 
 With the advanced syntax, the `exec` subdirective must appear exactly once. The
 `match` subdirective must appear at least once. The `env` and `pass_env`
