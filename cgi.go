@@ -103,7 +103,10 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 			ok, lfStr, rtStr := match(r.URL.Path, matchStr)
 			if ok {
 				var buf bytes.Buffer
-				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header.Get("Authorized"))
+				// Retrieve name of remote user that was set by some downstream middleware,
+				// possibly basicauth.
+				remoteUser, _ := r.Context().Value(httpserver.CtxKey("remote_user")).(string) // Blank if not set
+				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, remoteUser)
 				cgiHnd.Stderr = &buf
 				cgiHnd.ServeHTTP(w, r)
 				if buf.Len() > 0 {
