@@ -24,6 +24,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/mholt/caddy"
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 )
 
@@ -105,7 +106,7 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				var buf bytes.Buffer
 				// Retrieve name of remote user that was set by some downstream middleware,
 				// possibly basicauth.
-				remoteUser, _ := r.Context().Value(httpserver.CtxKey("remote_user")).(string) // Blank if not set
+				remoteUser, _ := r.Context().Value(caddy.CtxKey("remote_user")).(string) // Blank if not set
 				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, remoteUser)
 				cgiHnd.Stderr = &buf
 				cgiHnd.ServeHTTP(w, r)
