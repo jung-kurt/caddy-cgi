@@ -10,12 +10,12 @@ generated web page to the client, your script simply writes content to standard
 output. In the case of POST requests, your script reads additional inbound
 content from standard input.
 
-The advantage of CGI is that you do not need to fuss with persistent server
-startup, long term memory management, sockets, and crash recovery. Your script
-is called when a request matches one the patterns that you specify in your
-Caddyfile. As soon as your script completes its response, it terminates. This
-simplicity makes CGI a perfect complement to the straightforward operation and
-configuration of Caddy. The benefits of Caddy, including HTTPS by default,
+The advantage of CGI is that you do not need to fuss with server statrtup and
+persistence, long term memory management, sockets, and crash recovery. Your
+script is called when a request matches one the patterns that you specify in
+your Caddyfile. As soon as your script completes its response, it terminates.
+This simplicity makes CGI a perfect complement to the straightforward operation
+and configuration of Caddy. The benefits of Caddy, including HTTPS by default,
 basic access authentication, and lots of middleware options extend easily to
 your CGI scripts.
 
@@ -227,11 +227,11 @@ the response looks the same except for the following lines:
 
 Fossil Example
 
-The fossil distributed software management tool is a native executable that
-supports interaction as a CGI application. In this example, /usr/bin/fossil is
-the executable and /home/quixote/projects.fossil is the fossil repository. To
-configure Caddy to serve it, use a cgi directive something like this in your
-Caddyfile:
+The fossil distributed software management tool is a native
+executable that supports interaction as a CGI application. In this example,
+/usr/bin/fossil is the executable and /home/quixote/projects.fossil is the
+fossil repository. To configure Caddy to serve it, use a cgi directive
+something like this in your Caddyfile:
 
 	cgi /projects /usr/bin/fossil /usr/local/cgi-bin/projects
 
