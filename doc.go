@@ -248,5 +248,21 @@ Allow REMOTE_USER authentication option when setting up fossil. This lets
 fossil dispense with its own authentication, assuming it has an account for
 the user.
 
+Agedu Example
+
+The agedu utility can be used to identify unused files that are taking
+up space on your storage media. Like fossil, it can be used in different modes
+including CGI. First, use it from the command line to generate an index of a
+directory, for example
+
+	agedu --file /home/quixote/agedu.dat --scan /home/quixote
+
+In your Caddyfile, include a directive that references the generated index:
+
+	cgi /agedu /usr/local/bin/agedu --cgi --file /home/quixote/agedu.dat
+
+You will want to protect the /agedu resource with some sort of access control,
+for example HTTP Basic Authentication.
+
 */
 package cgi

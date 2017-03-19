@@ -272,7 +272,24 @@ and responds as a CGI application. If you protect /projects with
 fossil dispense with its own authentication, assuming it has an account for
 the user.
 
+### Agedu Example
+
+The [agedu][agedu] utility can be used to identify unused files that are taking
+up space on your storage media. Like fossil, it can be used in different modes
+including CGI. First, use it from the command line to generate an index of a
+directory, for example
+
+	agedu --file /home/quixote/agedu.dat --scan /home/quixote
+
+In your Caddyfile, include a directive that references the generated index:
+
+	cgi /agedu /usr/local/bin/agedu --cgi --file /home/quixote/agedu.dat
+
+You will want to protect the /agedu resource with some sort of access control,
+for example [HTTP Basic Authentication][auth].
+
 ~cr~
+[agedu]: http://www.chiark.greenend.org.uk/~sgtatham/agedu/
 [auth]: https://caddyserver.com/docs/basicauth
 [badge-build]: https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master
 [badge-mit]: https://img.shields.io/badge/license-MIT-blue.svg
