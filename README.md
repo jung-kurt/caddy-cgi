@@ -25,12 +25,14 @@ basic access authentication, and lots of middleware options extend easily to
 your CGI scripts.
 
 The disadvantage of CGI is that Caddy needs to start a new process for each
-request. This could adversely impact your server's responsiveness in some
-circumstances, such as when your web server is hit with very high demand, when
-your script's dependencies require a long startup, or when concurrently running
-scripts take a long time to respond. However, in many cases, such as using a
-pre-compiled CGI application like fossil or a Lua script, the impact will
-generally be insignificant.
+request. This can adversely impact performance and, if resources are shared
+between CGI applications, may require the use of some interprocess
+synchronization mechanism such as a file lock. Your server's responsiveness
+could in some circumstances be affected, such as when your web server is hit
+with very high demand, when your script's dependencies require a long startup,
+or when concurrently running scripts take a long time to respond. However, in
+many cases, such as using a pre-compiled CGI application like fossil or a Lua
+script, the impact will generally be insignificant.
 
 **Important**: CGI scripts should be located outside of Caddy's document root.
 Otherwise, an inadvertent misconfiguration could result in Caddy delivering
