@@ -190,6 +190,11 @@ SCRIPT_EXEC variable is not a CGI standard. It is provided by this middleware
 and contains the entire command line, including all arguments, with which the
 CGI script was executed.
 
+Note: The basicauth plugin for Caddy 0.9.5 and earlier does not provide
+remote user information to other middleware such as this CGI plugin. To use the
+REMOTE_USER environment variable, you need to wait for Caddy 0.10.0 or build
+your Caddy executable from the current source tree.
+
 When a browser requests
 
 	http://192.168.1.2:8080/show/weekly?mode=summary
