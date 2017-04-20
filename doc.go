@@ -290,7 +290,7 @@ bytes.Buffer makes it easy to report the content length in the CGI header.
 		buf.WriteTo(os.Stdout)
 	}
 
-When this program is compiled and installed as /usr/local/bin/servertime, the 
+When this program is compiled and installed as /usr/local/bin/servertime, the
 following directive in your Caddy file will make it available:
 
 	cgi /servertime /usr/local/bin/servertime
