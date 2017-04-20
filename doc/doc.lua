@@ -42,7 +42,7 @@ local function readmewrite(tbl)
 	tbl = codeblock(tbl)
 	local str = concat(tbl, '\n')
 	str = gsub(str, '%b<>', '')
-	write('README.md', str)
+	write('../README.md', str)
 end
 
 local function godocwrite(tbl)
@@ -60,7 +60,7 @@ local function godocwrite(tbl)
 	-- replace [foo][bar] with foo
 	str = gsub(str, '%[(%C-)%]%[%C-%]', '%1')
 	str = '/*\n' .. str .. '\n*/\npackage cgi\n'
-	write('doc.go', str)
+	write('../doc.go', str)
 end
 
 local godoc, caddy, readme = {}, {}, {}
