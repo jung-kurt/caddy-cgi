@@ -34,14 +34,14 @@ end
 
 local function caddywrite(tbl)
 	local str = concat(tbl, '\n')
-	str = gsub(str, '\n\n(%*%*.-)\n\n', '\n\n<mark class="block">%1</mark>\n\n')
+	-- str = gsub(str, '\n\n(%*%*.-)\n\n', '\n\n<mark class="block">%1</mark>\n\n')
 	write('cgi.md', str)
 end
 
 local function readmewrite(tbl)
 	tbl = codeblock(tbl)
 	local str = concat(tbl, '\n')
-	str = gsub(str, '%b<>', '')
+	-- str = gsub(str, '%b<>', '')
 	write('../README.md', str)
 end
 
@@ -56,7 +56,7 @@ local function godocwrite(tbl)
 	str = gsub(str, '/%*%.', '\v')
 	str = gsub(str, '%*', '')
 	str = gsub(str, '\v', '/*.')
-	str = gsub(str, '%b<>', '')
+	-- str = gsub(str, '%b<>', '')
 	-- replace [foo][bar] with foo
 	str = gsub(str, '%[(%C-)%]%[%C-%]', '%1')
 	str = '/*\n' .. str .. '\n*/\npackage cgi\n'

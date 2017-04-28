@@ -10,7 +10,7 @@ generated web page to the client, your script simply writes content to standard
 output. In the case of POST requests, your script reads additional inbound
 content from standard input.
 
-The advantage of CGI is that you do not need to fuss with server statrtup and
+The advantage of CGI is that you do not need to fuss with server startup and
 persistence, long term memory management, sockets, and crash recovery. Your
 script is called when a request matches one the patterns that you specify in
 your Caddyfile. As soon as your script completes its response, it terminates.
@@ -29,11 +29,27 @@ or when concurrently running scripts take a long time to respond. However, in
 many cases, such as using a pre-compiled CGI application like fossil or a Lua
 script, the impact will generally be insignificant.
 
-Important: CGI scripts should be located outside of Caddy's document root.
-Otherwise, an inadvertent misconfiguration could result in Caddy delivering
-the script as an ordinary static resource. At best, this could merely confuse
-the site visitor. At worst, it could expose sensitive internal information
-that should not leave the server.
+Security Considerations
+
+Serving dynamic content exposes your server to more potential threats than
+serving static pages. There are a number of considerations of which you should
+be aware when using CGI applications.
+
+CGI scripts should be located outside of Caddy's document root.
+Otherwise, an inadvertent misconfiguration could result in Caddy delivering the
+script as an ordinary static resource. At best, this could merely confuse the
+site visitor. At worst, it could expose sensitive internal information that
+should not leave the server.
+
+Mistrust the contents of PATH_INFO, QUERY_STRING and standard input.
+Most of the environment variables available to your CGI program are inherently
+safe because they originate with Caddy and cannot be modified by external
+users. This is not the case with PATH_INFO, QUERY_STRING and, in the case
+of POST actions, the contents of standard input. Be sure to validate and
+sanitize all inbound content. If you use a CGI library or framework to process
+your scripts, make sure you understand its limitations.
+
+Application Modes
 
 Your CGI application can be executed directly or indirectly. In the direct
 case, the application can be a compiled native executable or it can be a shell
@@ -44,7 +60,7 @@ sure the application's ownership and permission bits are set appropriately; on
 Windows, this may involve properly setting up the filename extension
 association.
 
-In the indirect case, the name of the CGI script is passed to an interpeter
+In the indirect case, the name of the CGI script is passed to an interpreter
 such as lua, perl or python.
 
 Basic Syntax
@@ -123,10 +139,10 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
 	cgi {
-	  match match [match2...]
-	  exec script [args...]
-	  env key1=val1 [key2=val2...]
-	  pass_env key1 [key2...]
+		match match [match2...]
+		exec script [args...]
+		env key1=val1 [key2=val2...]
+		pass_env key1 [key2...]
 	}
 
 With the advanced syntax, the exec subdirective must appear exactly once. The
@@ -290,10 +306,77 @@ bytes.Buffer makes it easy to report the content length in the CGI header.
 		buf.WriteTo(os.Stdout)
 	}
 
-When this program is compiled and installed as /usr/local/bin/servertime, the
+When this program is compiled and installed as /usr/local/bin/servertime, the 
 following directive in your Caddy file will make it available:
 
 	cgi /servertime /usr/local/bin/servertime
+
+PHP Example
+
+Feeling reckless? You can run PHP in CGI mode. In general,
+FastCGI is the preferred method to run PHP if your application has
+many pages or a fair amount of database activity. But for small PHP programs
+that are seldom used, CGI can work fine. You'll need the php-cgi interpreter
+for your platform. This may involve downloading the executable or downloading
+and then compiling the source code. For this example, assume the interpreter is
+installed as /usr/local/bin/php-cgi. Additionally, because of the way PHP
+operates in CGI mode, you will need an intermediate script. This one works in
+Posix environments:
+
+	#!/bin/bash
+	
+	REDIRECT_STATUS=1 SCRIPT_FILENAME="${1}" /usr/local/bin/php-cgi -c /home/quixote/.config/php/php-cgi.ini
+
+This script can be reused for multiple cgi directives. In this example, it is
+installed as /usr/local/cgi-bin/phpwrap. The argument following -c is your
+initialization file for PHP. In this example, it is named
+/home/quixote/.config/php/php-cgi.ini.
+
+Two PHP files will be used for example. The first, /usr/local/cgi-bin/sample/min.php, looks like this:
+
+	<!DOCTYPE html>
+	<html>
+	  <head>
+		<title>PHP Sample</title>
+		<style>
+		  form span {
+			font: 15px sans-serif;
+			display: inline-block;
+			width: 8em;
+			text-align: right;
+		  }
+		</style>
+	  </head>
+	  <body>
+		<form action="action.php" method="post">
+		  <p><span>Name</span> <input type="text" name="name" /></p>
+		  <p><span>Number</span> <input type="text" name="number" /></p>
+		  <p><span>Day</span> <input type="text" name="day" 
+			value="<?php echo(date("l", time())); ?>" /></p>
+		  <p><span>&nbsp;</span> <input type="submit" /></p>
+		</form>
+	  </body>
+	</html>
+
+The second, /usr/local/cgi-bin/sample/action.php, follows:
+
+	<!DOCTYPE html>
+	<html>
+	  <head>
+		<title>PHP Sample</title>
+	  </head>
+	  <body>
+		<p>Name is <strong><?php echo htmlspecialchars($_POST['name']); ?></strong>.</p>
+		<p>Number is <strong><?php echo (int)$_POST['number']; ?></strong>.</p>
+		<p>Day is <strong><?php echo $_POST['day']; ?></strong>.</p>
+	  </body>
+	</html>
+
+The following directive in your Caddyfile will make the application available
+at sample/min.php:
+
+	cgi /sample/*.php /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
+
 
 */
 package cgi
