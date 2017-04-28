@@ -103,13 +103,18 @@ placeholder replacement. In addition to the standard Caddy placeholders such as
 {method} and {host}, the following placeholders substitutions are made:
 
 • {.} is replaced with Caddy's current working directory
+
 • {match} is replaced with the portion of the request that satisfies the match
   directive
+
 • {root} is replaced with Caddy's specified root directory
 
-You can include glob wildcards in your matches. See the documentation for
-path/Match in the Go standard library for more details about glob
-matching. Here is an example directive:
+You can include glob wildcards in your matches. Basically, an asterisk
+represents a sequence of zero or more non-slash characters and a question mark
+represents a single non-slash character. These wildcards can be used multiple
+times in a match expression, for example, /report/*/*/*.lua. See the
+documentation for path/Match in the Go standard library for more
+details about glob matching. Here is an example directive:
 
 	cgi /report/*.lua /usr/bin/lua /usr/local/cgi-bin/{match}
 

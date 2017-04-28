@@ -49,13 +49,14 @@ local function godocwrite(tbl)
 	tbl = codeblock(tbl)
 	for j, str in ipairs(tbl) do
 		str = gsub(str, '^#+ *', '')
-		tbl[j] = gsub(str, '^* ', '• ')
+		tbl[j] = gsub(str, '^* ', '\n• ')
 	end
 	local str = concat(tbl, '\n')
+	str = gsub(str, '\n\n\n+', '\n\n')
 	str = gsub(str, '`', '')
-	str = gsub(str, '/%*%.', '\v')
+	str = gsub(str, '/%*', '\x01')
 	str = gsub(str, '%*', '')
-	str = gsub(str, '\v', '/*.')
+	str = gsub(str, '\x01', '/*')
 	-- str = gsub(str, '%b<>', '')
 	-- replace [foo][bar] with foo
 	str = gsub(str, '%[(%C-)%]%[%C-%]', '%1')
