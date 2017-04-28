@@ -311,7 +311,7 @@ bytes.Buffer makes it easy to report the content length in the CGI header.
 		buf.WriteTo(os.Stdout)
 	}
 
-When this program is compiled and installed as /usr/local/bin/servertime, the 
+When this program is compiled and installed as /usr/local/bin/servertime, the
 following directive in your Caddy file will make it available:
 
 	cgi /servertime /usr/local/bin/servertime
@@ -329,7 +329,7 @@ operates in CGI mode, you will need an intermediate script. This one works in
 Posix environments:
 
 	#!/bin/bash
-	
+
 	REDIRECT_STATUS=1 SCRIPT_FILENAME="${1}" /usr/local/bin/php-cgi -c /home/quixote/.config/php/php-cgi.ini
 
 This script can be reused for multiple cgi directives. In this example, it is
@@ -341,40 +341,40 @@ Two PHP files will be used for example. The first, /usr/local/cgi-bin/sample/min
 
 	<!DOCTYPE html>
 	<html>
-	  <head>
-		<title>PHP Sample</title>
-		<style>
-		  form span {
-			font: 15px sans-serif;
-			display: inline-block;
-			width: 8em;
-			text-align: right;
-		  }
-		</style>
-	  </head>
-	  <body>
-		<form action="action.php" method="post">
-		  <p><span>Name</span> <input type="text" name="name" /></p>
-		  <p><span>Number</span> <input type="text" name="number" /></p>
-		  <p><span>Day</span> <input type="text" name="day" 
-			value="<?php echo(date("l", time())); ?>" /></p>
-		  <p><span>&nbsp;</span> <input type="submit" /></p>
-		</form>
-	  </body>
+		<head>
+			<title>PHP Sample</title>
+			<style>
+				form span {
+					font: 15px sans-serif;
+					display: inline-block;
+					width: 8em;
+					text-align: right;
+				}
+			</style>
+		</head>
+		<body>
+			<form action="action.php" method="post">
+				<p><span>Name</span> <input type="text" name="name" /></p>
+				<p><span>Number</span> <input type="text" name="number" /></p>
+				<p><span>Day</span> <input type="text" name="day"
+					value="<?php echo(date("l", time())); ?>" /></p>
+				<p><span>&nbsp;</span> <input type="submit" /></p>
+			</form>
+		</body>
 	</html>
 
 The second, /usr/local/cgi-bin/sample/action.php, follows:
 
 	<!DOCTYPE html>
 	<html>
-	  <head>
-		<title>PHP Sample</title>
-	  </head>
-	  <body>
-		<p>Name is <strong><?php echo htmlspecialchars($_POST['name']); ?></strong>.</p>
-		<p>Number is <strong><?php echo (int)$_POST['number']; ?></strong>.</p>
-		<p>Day is <strong><?php echo $_POST['day']; ?></strong>.</p>
-	  </body>
+		<head>
+			<title>PHP Sample</title>
+		</head>
+		<body>
+			<p>Name is <strong><?php echo htmlspecialchars($_POST['name']); ?></strong>.</p>
+			<p>Number is <strong><?php echo (int)$_POST['number']; ?></strong>.</p>
+			<p>Day is <strong><?php echo $_POST['day']; ?></strong>.</p>
+		</body>
 	</html>
 
 The following directive in your Caddyfile will make the application available
