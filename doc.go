@@ -145,6 +145,15 @@ looks like this:
 		pass_env key1 [key2...]
 	}
 
+For example,
+
+	cgi {
+		match /sample/*.php /sample/app/*.php
+		exec /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
+		env DB=/usr/share/app/app.db SECRET=/usr/local/app/secret
+		pass_env HOME UID
+	}
+
 With the advanced syntax, the exec subdirective must appear exactly once. The
 match subdirective must appear at least once. The env and pass_env
 subdirectives can appear any reasonable number of times.
