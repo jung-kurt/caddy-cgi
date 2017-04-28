@@ -170,7 +170,7 @@ For example,
 	cgi {
 		match /sample/*.php /sample/app/*.php
 		exec /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
-		env DB=/usr/share/app/app.db SECRET=/usr/local/app/secret
+		env DB=/usr/local/share/app/app.db SECRET=/usr/local/share/app/secret
 		pass_env HOME UID
 	}
 
