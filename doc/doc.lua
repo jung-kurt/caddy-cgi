@@ -56,7 +56,7 @@ local function godocwrite(tbl)
 	str = gsub(str, '`', '')
 	str = gsub(str, '/%*', '\x01')
 	str = gsub(str, '%*', '')
-	str = gsub(str, '\x01', '/*')
+	str = gsub(str, '\x01', '\x2f*')
 	-- str = gsub(str, '%b<>', '')
 	-- replace [foo][bar] with foo
 	str = gsub(str, '%[(%C-)%]%[%C-%]', '%1')
