@@ -110,8 +110,7 @@ placeholder replacement. In addition to the standard Caddy placeholders such as
 `{method}` and `{host}`, the following placeholders substitutions are made:
 
 * **{.}** is replaced with Caddy's current working directory
-* **{match}** is replaced with the portion of the request that satisfies the match
-  directive
+* **{match}** is replaced with the portion of the request that satisfies the match directive
 * **{root}** is replaced with Caddy's specified root directory
 
 You can include glob wildcards in your matches. Basically, an asterisk

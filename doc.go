@@ -104,8 +104,7 @@ placeholder replacement. In addition to the standard Caddy placeholders such as
 
 • {.} is replaced with Caddy's current working directory
 
-• {match} is replaced with the portion of the request that satisfies the match
-  directive
+• {match} is replaced with the portion of the request that satisfies the match directive
 
 • {root} is replaced with Caddy's specified root directory
 
