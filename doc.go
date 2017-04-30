@@ -19,15 +19,18 @@ and configuration of Caddy. The benefits of Caddy, including HTTPS by default,
 basic access authentication, and lots of middleware options extend easily to
 your CGI scripts.
 
-The disadvantage of CGI is that Caddy needs to start a new process for each
-request. This can adversely impact performance and, if resources are shared
-between CGI applications, may require the use of some interprocess
+CGI has some disadvantages. For one, Caddy needs to start a new process for
+each request. This can adversely impact performance and, if resources are
+shared between CGI applications, may require the use of some interprocess
 synchronization mechanism such as a file lock. Your server's responsiveness
 could in some circumstances be affected, such as when your web server is hit
 with very high demand, when your script's dependencies require a long startup,
 or when concurrently running scripts take a long time to respond. However, in
 many cases, such as using a pre-compiled CGI application like fossil or a Lua
-script, the impact will generally be insignificant.
+script, the impact will generally be insignificant. Another restriction of CGI
+is that scripts will be run with the same permissions as Caddy itself. This can
+sometimes be less than ideal, for example when your script needs to read or
+write files associated with a different owner.
 
 Security Considerations
 
@@ -323,6 +326,59 @@ When this program is compiled and installed as /usr/local/bin/servertime, the
 following directive in your Caddy file will make it available:
 
 	cgi /servertime /usr/local/bin/servertime
+
+Cgit Example
+
+The cgit application provides an attractive and useful web interface to
+git repositories. Here is how to run it with Caddy. After compiling cgit, you
+can place the executable somewhere out of Caddy's document root. In this
+example, it is located in /usr/local/cgi-bin.
+
+A sample configuration file is included in the project's cgitrc.5.txt file. You
+can use it as a starting point for your configuration. The default location for
+this file is /etc/cgitrc but in this example the location
+/home/quixote/caddy/cgitrc. Note that changing the location of this file from
+its default will necessitate the inclusion of the environment variable
+CGIT_CONFIG in the Caddyfile cgi directive.
+
+When you edit the repository stanzas in this file, be sure each repo.path item
+refers to the .git directory within a working checkout. Here is an example
+stanza:
+
+	repo.url=caddy-cgi
+	repo.path=/home/quixote/go/src/github.com/jung-kurt/caddy-cgi/.git
+	repo.desc=CGI for Caddy
+	repo.owner=jung-kurt
+	repo.readme=/home/quixote/go/src/github.com/jung-kurt/caddy-cgi/README.md
+
+Also, you will likely want to change cgit's cache directory from its default
+in /var/cache (generally accessible only to root) to a location writeable by
+Caddy. In this example, cgitrc contains the line
+
+	cache-root=/home/quixote/.cache/cgit
+
+You may need to create the cgit subdirectory.
+
+There are some static cgit resources (namely, cgit.css, favicon.ico, and
+cgit.png) that will be accessed from Caddy's document tree. For this example,
+these files are placed in a directory named cgit-resource. The following lines
+are part of the cgitrc file:
+
+	css=/cgit-resource/cgit.css
+	favicon=/cgit-resource/favicon.ico
+	logo=/cgit-resource/cgit.png
+
+Additionally, you will likely need to tweak the various file viewer filters
+such source-filter and about-filter based on your system.
+
+The following Caddyfile directive will allow you to access the cgit application
+at /cgit:
+
+	cgi {
+		match /cgit
+		exec /usr/local/cgi-bin/cgit
+		env CGIT_CONFIG=/home/quixote/caddy/cgitrc
+	}
 
 PHP Example
 
