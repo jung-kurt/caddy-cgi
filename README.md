@@ -466,6 +466,7 @@ at sample/min.php:
 [fossil]: https://www.fossil-scm.org/
 [github]: https://github.com/jung-kurt/caddy-cgi
 [jung]: https://github.com/jung-kurt/
+[key]: class:key
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
 [php]: http://php.net/

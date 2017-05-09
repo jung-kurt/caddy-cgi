@@ -79,7 +79,8 @@ The basic cgi directive lets you associate a single pattern with a particular
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
-	cgi match exec [args...]
+> %syntax%
+> [cgi][key] match exec [args...]
 
 For example:
 
@@ -150,12 +151,13 @@ environment variables known to Caddy, or specify more than one match pattern
 for a given rule, you will need to use the advanced directive syntax. That
 looks like this:
 
-	cgi {
-		match match [match2...]
-		exec script [args...]
-		env key1=val1 [key2=val2...]
-		pass_env key1 [key2...]
-	}
+> %syntax%
+> [cgi][key] {
+>   [match][key] match [match2...]
+>   [exec][key] script [args...]
+>   [env][key] key1=val1 [key2=val2...]
+>   [pass_env][key] key1 [key2...]
+> }
 
 For example,
 
@@ -467,6 +469,7 @@ at sample/min.php:
 [fossil]: https://www.fossil-scm.org/
 [github]: https://github.com/jung-kurt/caddy-cgi
 [jung]: https://github.com/jung-kurt/
+[key]: class:key
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
 [php]: http://php.net/
