@@ -41,6 +41,7 @@ end
 local function readmewrite(tbl)
 	tbl = codeblock(tbl)
 	local str = concat(tbl, '\n')
+	str = gsub(str, '\n%> ', '\n')
 	-- str = gsub(str, '%b<>', '')
 	write('../README.md', str)
 end
@@ -53,6 +54,7 @@ local function godocwrite(tbl)
 	end
 	local str = concat(tbl, '\n')
 	str = gsub(str, '\n\n\n+', '\n\n')
+	str = gsub(str, '\n%> ', '\n')
 	str = gsub(str, '`', '')
 	str = gsub(str, '/%*', '\x01')
 	str = gsub(str, '%*', '')
@@ -68,7 +70,7 @@ local godoc, caddy, readme = {}, {}, {}
 local modeg, modec, moder
 
 for str in io.lines('doc.txt') do
-	local mode = string.match(str, '^~(%a+)~$')
+	local mode = string.match(str, '^~(%a*)~$')
 	if mode then
 		modeg = find(mode, 'g') ~= nil
 		moder = find(mode, 'r') ~= nil

@@ -1,13 +1,10 @@
----
-title: cgi
-type: docs
-directive: true
-plugin: true
-link: https://github.com/jung-kurt/caddy-cgi
----
+# CGI for Caddy
 
-cgi implements the common gateway interface ([CGI][cgi-wiki]). This directive
-may be used multiple times with different match patterns.
+[![Git Hub repository][badge-github]][github]
+[![Kurt Jung][badge-author]][jung]
+[![MIT licensed][badge-mit]][license]
+[![Build Status][badge-build]][travis]
+[![Report][badge-report]][report]
 
 This plugin lets you generate dynamic content on your website by means of
 command line scripts. To collect information about the inbound HTTP request,
@@ -45,19 +42,22 @@ Serving dynamic content exposes your server to more potential threats than
 serving static pages. There are a number of considerations of which you should
 be aware when using CGI applications.
 
-**CGI scripts should be located outside of Caddy's document root.**
-Otherwise, an inadvertent misconfiguration could result in Caddy delivering the
-script as an ordinary static resource. At best, this could merely confuse the
-site visitor. At worst, it could expose sensitive internal information that
-should not leave the server.
+> %warning%
+> **CGI scripts should be located outside of Caddy's document root.**
+> Otherwise, an inadvertent misconfiguration could result in Caddy delivering
+> the script as an ordinary static resource. At best, this could merely
+> confuse the site visitor. At worst, it could expose sensitive internal
+> information that should not leave the server.
 
-**Mistrust the contents of `PATH_INFO`, `QUERY_STRING` and standard input.**
-Most of the environment variables available to your CGI program are inherently
-safe because they originate with Caddy and cannot be modified by external
-users. This is not the case with `PATH_INFO`, `QUERY_STRING` and, in the case
-of POST actions, the contents of standard input. Be sure to validate and
-sanitize all inbound content. If you use a CGI library or framework to process
-your scripts, make sure you understand its limitations.
+> %warning%
+> **Mistrust the contents of `PATH_INFO`, `QUERY_STRING` and standard input.**
+> Most of the environment variables available to your CGI program are
+> inherently safe because they originate with Caddy and cannot be modified by
+> external users. This is not the case with `PATH_INFO`, `QUERY_STRING` and,
+> in the case of POST actions, the contents of standard input. Be sure to
+> validate and sanitize all inbound content. If you use a CGI library or
+> framework to process your scripts, make sure you understand its
+> limitations.
 
 ### Application Modes
 
@@ -455,17 +455,20 @@ at sample/min.php:
 
 [agedu]: http://www.chiark.greenend.org.uk/~sgtatham/agedu/
 [auth]: https://caddyserver.com/docs/basicauth
+[badge-author]: https://img.shields.io/badge/author-Kurt_Jung-blue.svg
 [badge-build]: https://travis-ci.org/jung-kurt/caddy-cgi.svg?branch=master
+[badge-github]: https://img.shields.io/badge/project-Git_Hub-blue.svg
 [badge-mit]: https://img.shields.io/badge/license-MIT-blue.svg
 [badge-report]: https://goreportcard.com/badge/github.com/jung-kurt/caddy-cgi
 [caddy]: https://caddyserver.com/
+[cgit]: https://git.zx2c4.com/cgit/about/
 [cgi-wiki]: https://en.wikipedia.org/wiki/Common_Gateway_Interface
+[fastcgi]: https://caddyserver.com/docs/fastcgi
 [fossil]: https://www.fossil-scm.org/
 [github]: https://github.com/jung-kurt/caddy-cgi
+[jung]: https://github.com/jung-kurt/
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
+[php]: http://php.net/
 [report]: https://goreportcard.com/report/github.com/jung-kurt/caddy-cgi
 [travis]: https://travis-ci.org/jung-kurt/caddy-cgi
-[php]: http://php.net/
-[fastcgi]: https://caddyserver.com/docs/fastcgi
-[cgit]: https://git.zx2c4.com/cgit/about/

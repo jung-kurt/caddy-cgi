@@ -39,18 +39,19 @@ serving static pages. There are a number of considerations of which you should
 be aware when using CGI applications.
 
 CGI scripts should be located outside of Caddy's document root.
-Otherwise, an inadvertent misconfiguration could result in Caddy delivering the
-script as an ordinary static resource. At best, this could merely confuse the
-site visitor. At worst, it could expose sensitive internal information that
-should not leave the server.
+Otherwise, an inadvertent misconfiguration could result in Caddy delivering
+the script as an ordinary static resource. At best, this could merely
+confuse the site visitor. At worst, it could expose sensitive internal
+information that should not leave the server.
 
 Mistrust the contents of PATH_INFO, QUERY_STRING and standard input.
-Most of the environment variables available to your CGI program are inherently
-safe because they originate with Caddy and cannot be modified by external
-users. This is not the case with PATH_INFO, QUERY_STRING and, in the case
-of POST actions, the contents of standard input. Be sure to validate and
-sanitize all inbound content. If you use a CGI library or framework to process
-your scripts, make sure you understand its limitations.
+Most of the environment variables available to your CGI program are
+inherently safe because they originate with Caddy and cannot be modified by
+external users. This is not the case with PATH_INFO, QUERY_STRING and,
+in the case of POST actions, the contents of standard input. Be sure to
+validate and sanitize all inbound content. If you use a CGI library or
+framework to process your scripts, make sure you understand its
+limitations.
 
 Application Modes
 
