@@ -467,6 +467,7 @@ at sample/min.php:
 [github]: https://github.com/jung-kurt/caddy-cgi
 [jung]: https://github.com/jung-kurt/
 [key]: class:key
+[subkey]: class:subkey
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
 [php]: http://php.net/

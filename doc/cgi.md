@@ -80,7 +80,7 @@ script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:
 
 > %syntax%
-> [cgi][key] match exec [args...]
+> [cgi][key] [match exec [args...]][subkey]
 
 For example:
 
@@ -153,10 +153,10 @@ looks like this:
 
 > %syntax%
 > [cgi][key] {
->   [match][key] match [match2...]
->   [exec][key] script [args...]
->   [env][key] key1=val1 [key2=val2...]
->   [pass_env][key] key1 [key2...]
+>   [match][key] [match [match2...]][subkey]
+>   [exec][key] [script [args...]][subkey]
+>   [env][key] [key1=val1 [key2=val2...]][subkey]
+>   [pass_env][key] [key1 [key2...]][subkey]
 > }
 
 For example,
@@ -470,6 +470,7 @@ at sample/min.php:
 [github]: https://github.com/jung-kurt/caddy-cgi
 [jung]: https://github.com/jung-kurt/
 [key]: class:key
+[subkey]: class:subkey
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
 [php]: http://php.net/
