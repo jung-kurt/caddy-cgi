@@ -16,7 +16,7 @@ content from standard input.
 
 The advantage of CGI is that you do not need to fuss with server startup and
 persistence, long term memory management, sockets, and crash recovery. Your
-script is called when a request matches one the patterns that you specify in
+script is called when a request matches one of the patterns that you specify in
 your Caddyfile. As soon as your script completes its response, it terminates.
 This simplicity makes CGI a perfect complement to the straightforward operation
 and configuration of Caddy. The benefits of Caddy, including HTTPS by default,
