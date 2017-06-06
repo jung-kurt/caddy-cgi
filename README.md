@@ -278,7 +278,7 @@ variables. For example, the following token claims
 will be available with the following environment variables
 
 	HTTP_TOKEN_CLAIM_SUB=1234567890
-	HTTP_TOKEN_CLAIM_USER=doe
+	HTTP_TOKEN_CLAIM_USER=quixote
 	HTTP_TOKEN_CLAIM_ADMIN=true
 
 All values are conveyed as strings, so some conversion may be necessary in your
