@@ -260,6 +260,27 @@ the response looks the same except for the following lines:
 	POST_DATA         [city=San%20Francisco]
 	REQUEST_METHOD    [POST]
 
+JSON web tokens
+
+If you protect your CGI application with the Caddy JWT middleware, your
+program will have access to the token's payload claims by means of environment
+variables. For example, the following token claims
+
+	{
+		"sub": "1234567890",
+		"user": "quixote",
+		"admin": true,
+	}
+
+will be available with the following environment variables
+
+	HTTP_TOKEN_CLAIM_SUB=1234567890
+	HTTP_TOKEN_CLAIM_USER=doe
+	HTTP_TOKEN_CLAIM_ADMIN=true
+
+All values are conveyed as strings, so some conversion may be necessary in your
+program.
+
 Fossil Example
 
 The fossil distributed software management tool is a native

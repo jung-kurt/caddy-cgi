@@ -23,6 +23,7 @@ import (
 	"net/http/cgi"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 )
@@ -62,7 +63,7 @@ func currentDir() (wdStr string) {
 // setupCall instantiates a CGI handler based on the incoming request and the
 // configuration rule that it matches.
 func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
-	rep httpserver.Replacer, username string) (cgiHnd cgi.Handler) {
+	rep httpserver.Replacer, hdr http.Header, username string) (cgiHnd cgi.Handler) {
 	cgiHnd.Root = "/"
 	cgiHnd.Dir = h.root
 	rep.Set("root", h.root)
@@ -86,6 +87,13 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)
+	// Convey JSON Web Token claims to CGI app by means of environment
+	for key, list := range hdr {
+		if strings.HasPrefix(key, "Token-Claim-") {
+			cgiHnd.Env = append(cgiHnd.Env, strings.ToUpper(key)+"="+
+				strings.Join(list, "\t"))
+		}
+	}
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	for _, str := range rule.args {
@@ -106,7 +114,7 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				// Retrieve name of remote user that was set by some downstream middleware,
 				// possibly basicauth.
 				remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
-				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, remoteUser)
+				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
 				cgiHnd.Stderr = &buf
 				cgiHnd.ServeHTTP(w, r)
 				if buf.Len() > 0 {

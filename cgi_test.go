@@ -64,14 +64,15 @@ func TestServe(t *testing.T) {
 	}
 
 	expectStr := `code [0], error [example error message]
-[    ]
+[---] [---] [---] [quixote] [] []
 code [0], error [example error message]
-[/1930/05/11 name=Edsger%20W.%20Dijkstra   ]
+[/1930/05/11] [---] [---] [---] [name=Edsger%20W.%20Dijkstra] [quixote]
 code [0], error [example error message]
-[12 --example   ]
+[---] [12] [--example] [quixote] [] []
 code [0], error [example error message]
-[/1930/05/11 12 --example name=Edsger%20W.%20Dijkstra ]
+[/1930/05/11] [---] [12] [--example] [name=Edsger%20W.%20Dijkstra] [quixote]
 `
+
 	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
 	// system call is made to respond to the request.
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
@@ -80,6 +81,9 @@ code [0], error [example error message]
 			hnd, err = handlerGet(directiveList[dirJ], "./test")
 			if err == nil {
 				srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					r.Header.Set("Token-Claim-User", "quixote")
+					r.Header.Set("Token-Claim-Language", "en-GB")
+					r.Header.Add("Token-Claim-Language", "en-AU")
 					code, err = hnd.ServeHTTP(w, r)
 					if err != nil {
 						fmt.Fprintf(&buf, "code [%d], error [%s]\n", code, err)

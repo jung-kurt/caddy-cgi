@@ -263,6 +263,27 @@ the response looks the same except for the following lines:
 	POST_DATA         [city=San%20Francisco]
 	REQUEST_METHOD    [POST]
 
+### JSON web tokens
+
+If you protect your CGI application with the [Caddy JWT][jwt] middleware, your
+program will have access to the token's payload claims by means of environment
+variables. For example, the following token claims
+
+	{
+		"sub": "1234567890",
+		"user": "quixote",
+		"admin": true,
+	}
+
+will be available with the following environment variables
+
+	HTTP_TOKEN_CLAIM_SUB=1234567890
+	HTTP_TOKEN_CLAIM_USER=doe
+	HTTP_TOKEN_CLAIM_ADMIN=true
+
+All values are conveyed as strings, so some conversion may be necessary in your
+program.
+
 ### Fossil Example
 
 The [fossil][fossil] distributed software management tool is a native
@@ -466,10 +487,11 @@ at sample/min.php:
 [fossil]: https://www.fossil-scm.org/
 [github]: https://github.com/jung-kurt/caddy-cgi
 [jung]: https://github.com/jung-kurt/
+[jwt]: https://github.com/BTBurke/caddy-jwt
 [key]: class:key
-[subkey]: class:subkey
 [license]: https://raw.githubusercontent.com/jung-kurt/caddy-cgi/master/LICENSE
 [match]: https://golang.org/pkg/path/#Match
 [php]: http://php.net/
 [report]: https://goreportcard.com/report/github.com/jung-kurt/caddy-cgi
+[subkey]: class:subkey
 [travis]: https://travis-ci.org/jung-kurt/caddy-cgi
