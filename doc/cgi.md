@@ -175,6 +175,27 @@ subdirectives can appear any reasonable number of times.
 The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.
 
+### JSON web tokens
+
+If you protect your CGI application with the [Caddy JWT][jwt] middleware, your
+program will have access to the token's payload claims by means of environment
+variables. For example, the following token claims
+
+	{
+		"sub": "1234567890",
+		"user": "quixote",
+		"admin": true,
+	}
+
+will be available with the following environment variables
+
+	HTTP_TOKEN_CLAIM_SUB=1234567890
+	HTTP_TOKEN_CLAIM_USER=quixote
+	HTTP_TOKEN_CLAIM_ADMIN=true
+
+All values are conveyed as strings, so some conversion may be necessary in your
+program.
+
 ### Environment Variable Example
 
 In this example, the Caddyfile looks like this:
@@ -265,27 +286,6 @@ the response looks the same except for the following lines:
 	CONTENT_TYPE      [application/x-www-form-urlencoded]
 	POST_DATA         [city=San%20Francisco]
 	REQUEST_METHOD    [POST]
-
-### JSON web tokens
-
-If you protect your CGI application with the [Caddy JWT][jwt] middleware, your
-program will have access to the token's payload claims by means of environment
-variables. For example, the following token claims
-
-	{
-		"sub": "1234567890",
-		"user": "quixote",
-		"admin": true,
-	}
-
-will be available with the following environment variables
-
-	HTTP_TOKEN_CLAIM_SUB=1234567890
-	HTTP_TOKEN_CLAIM_USER=quixote
-	HTTP_TOKEN_CLAIM_ADMIN=true
-
-All values are conveyed as strings, so some conversion may be necessary in your
-program.
 
 ### Fossil Example
 
