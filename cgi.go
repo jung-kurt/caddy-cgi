@@ -23,7 +23,6 @@ import (
 	"net/http/cgi"
 	"path"
 	"path/filepath"
-	"strings"
 
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 )
@@ -75,9 +74,6 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 		val = rep.Replace(val)
 		cgiHnd.Env = append(cgiHnd.Env, key+"="+val)
 	}
-	// 	if r.TLS != nil {
-	// 		env["HTTPS"] = "on"
-	// 	}
 	for _, env := range rule.envs {
 		envAdd(env[0], env[1])
 	}
@@ -87,13 +83,6 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)
-	// Convey JSON Web Token claims to CGI app by means of environment
-	for key, list := range hdr {
-		if strings.HasPrefix(key, "Token-Claim-") {
-			cgiHnd.Env = append(cgiHnd.Env, strings.ToUpper(key)+"="+
-				strings.Join(list, "\t"))
-		}
-	}
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	for _, str := range rule.args {
