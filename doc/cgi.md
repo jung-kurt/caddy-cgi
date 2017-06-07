@@ -194,7 +194,7 @@ will be available with the following environment variables
 	HTTP_TOKEN_CLAIM_ADMIN=true
 
 All values are conveyed as strings, so some conversion may be necessary in your
-program.
+program. No placeholder substitutions are made on these values.
 
 ### Environment Variable Example
 
