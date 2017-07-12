@@ -105,7 +105,7 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				cgiHnd.ServeHTTP(w, r)
 				if buf.Len() > 0 {
 					var errStr = trim(buf.String())
-					log.Println(errStr)
+					log.Printf("[CGI ERROR] %s", errStr)
 					err = errors.New(errStr)
 				}
 				return
