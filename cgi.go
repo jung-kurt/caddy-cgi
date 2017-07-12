@@ -19,6 +19,7 @@ package cgi
 import (
 	"bytes"
 	"errors"
+	"log"
 	"net/http"
 	"net/http/cgi"
 	"path"
@@ -77,13 +78,9 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	for _, env := range rule.envs {
 		envAdd(env[0], env[1])
 	}
-	for _, env := range rule.envs {
-		envAdd(env[0], env[1])
-	}
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)
-	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
 	for _, str := range rule.args {
 		cgiHnd.Args = append(cgiHnd.Args, rep.Replace(str))
@@ -107,7 +104,9 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				cgiHnd.Stderr = &buf
 				cgiHnd.ServeHTTP(w, r)
 				if buf.Len() > 0 {
-					err = errors.New(trim(buf.String()))
+					var errStr = trim(buf.String())
+					log.Println(errStr)
+					err = errors.New(errStr)
 				}
 				return
 			}
