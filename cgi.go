@@ -19,7 +19,6 @@ package cgi
 import (
 	"bytes"
 	"errors"
-	"log"
 	"net/http"
 	"net/http/cgi"
 	"path"
@@ -104,9 +103,7 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				cgiHnd.Stderr = &buf
 				cgiHnd.ServeHTTP(w, r)
 				if buf.Len() > 0 {
-					var errStr = trim(buf.String())
-					log.Printf("[CGI ERROR] %s", errStr)
-					err = errors.New(errStr)
+					err = errors.New(trim(buf.String()))
 				}
 				return
 			}
