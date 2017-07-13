@@ -117,7 +117,7 @@ directive syntax described below.
 
 The values used for the script name and its arguments are subject to
 placeholder replacement. In addition to the standard Caddy placeholders such as
-`{method}` and `{host}`, the following placeholders substitutions are made:
+`{method}` and `{host}`, the following placeholder substitutions are made:
 
 * **{.}** is replaced with Caddy's current working directory
 * **{match}** is replaced with the portion of the request that satisfies the match directive
