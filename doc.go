@@ -53,6 +53,14 @@ validate and sanitize all inbound content. If you use a CGI library or
 framework to process your scripts, make sure you understand its
 limitations.
 
+Errors
+
+An error in a CGI application is generally handled within the application
+itself and reported in the headers it returns. Additionally, if the Caddy
+errors directive is enabled, any content the application writes to its
+standard error stream will be written to the error log. This can be useful to
+diagnose problems with the execution of the CGI application.
+
 Application Modes
 
 Your CGI application can be executed directly or indirectly. In the direct
@@ -168,6 +176,11 @@ subdirectives can appear any reasonable number of times.
 
 The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.
+
+If your CGI application runs properly at the command line but fails to run from
+Caddy it is possible that certain environment variables may be missing. For
+example, the ruby gem loader evidently requires the HOME environment variable
+to be set; you can do this with the subdirective pass_env HOME.
 
 JSON web tokens
 
