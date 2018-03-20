@@ -229,7 +229,7 @@ with the `match` subdirective. Any request that matches a `match` pattern is
 then checked with the patterns in `except`, if any. If any matches are made
 with the `except` pattern, the request is rejected.
 
-The empty_env subdirective is used to pass one or more empty environment
+The `empty_env` subdirective is used to pass one or more empty environment
 variables. Some CGI scripts may expect the server to pass certain empty
 variables rather than leaving them unset. This subdirective allows you to deal
 with those situations.
