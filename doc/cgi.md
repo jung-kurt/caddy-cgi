@@ -155,9 +155,9 @@ This method facilitates the use of CGI on the Windows platform.
 ### Advanced Syntax
 
 In order to specify custom environment variables, pass along one or more
-environment variables known to Caddy, specify more than one match pattern for a
-given rule, or exclude certain matches, you will need to use the advanced
-directive syntax. That looks like this:
+environment variables known to Caddy, or specify more than one match pattern
+for a given rule, you will need to use the advanced directive syntax. That
+looks like this:
 
 > %syntax%
 > [cgi][key] {
