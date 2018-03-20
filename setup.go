@@ -81,6 +81,16 @@ func parseMatch(rule *ruleType, args []string) (err error) {
 	return
 }
 
+// parseExcept parses a match line
+func parseExcept(rule *ruleType, args []string) (err error) {
+	if len(args) > 0 {
+		rule.exceptions = append(rule.exceptions, args...)
+	} else {
+		err = errorf("expecting at least one argument to follow \"except\"")
+	}
+	return
+}
+
 // parseEnv parses a list of "key = value" pairs on a line
 func parseEnv(envs *[][2]string, args []string) (err error) {
 	count := len(args)
@@ -110,6 +120,8 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 				switch val {
 				case "match": // [1..n]
 					err = parseMatch(&rule, args)
+				case "except":
+					err = parseExcept(&rule, args)
 				case "exec": // [1]
 					err = parseExec(&rule, args)
 				case "env": // [0..n]

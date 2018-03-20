@@ -155,13 +155,14 @@ This method facilitates the use of CGI on the Windows platform.
 ### Advanced Syntax
 
 In order to specify custom environment variables, pass along one or more
-environment variables known to Caddy, or specify more than one match pattern
-for a given rule, you will need to use the advanced directive syntax. That
-looks like this:
+environment variables known to Caddy, specify more than one match pattern for a
+given rule, or exclude certain matches, you will need to use the advanced
+directive syntax. That looks like this:
 
 > %syntax%
 > [cgi][key] {
 >   [match][key] [match [match2...]][subkey]
+>   [except][key] [match [match2...]][subkey]
 >   [exec][key] [script [args...]][subkey]
 >   [env][key] [key1=val1 [key2=val2...]][subkey]
 >   [pass_env][key] [key1 [key2...]][subkey]
@@ -171,14 +172,20 @@ For example,
 
 	cgi {
 		match /sample/*.php /sample/app/*.php
+		except /sample/init.php
 		exec /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
 		env DB=/usr/local/share/app/app.db SECRET=/usr/local/share/app/secret
 		pass_env HOME UID
 	}
 
 With the advanced syntax, the `exec` subdirective must appear exactly once. The
-`match` subdirective must appear at least once. The `env` and `pass_env`
-subdirectives can appear any reasonable number of times.
+`match` subdirective must appear at least once. The `env`, `pass_env`, and
+`except` subdirectives can appear any reasonable number of times.
+
+The `except` subdirective uses the same pattern matching logic that is used
+with the `match` subdirective. Any request that matches a `match` pattern is
+then checked with the patterns in `except`, if any. If any matches are made
+with the `except` pattern, the request is rejected.
 
 The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.

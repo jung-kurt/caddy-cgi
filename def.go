@@ -16,6 +16,8 @@ type handlerType struct {
 type ruleType struct {
 	// Glob patterns to match in order to apply rule
 	matches []string // glob patterns, [1..n]
+	// Match exceptions
+	exceptions []string
 	// Name of executable script or binary
 	exe string // [1]
 	// Arguments to submit to executable

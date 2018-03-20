@@ -52,25 +52,46 @@ func TestServe(t *testing.T) {
 		`cgi /servertime {.}/test/example`,
 		`cgi {
   match /servertime
+  except /servertime/1934
   exec {.}/test/example --example
   env CGI_GLOBAL=12
 }`,
 	}
 
-	putList := []string{
+	requestList := []string{
 		"/servertime",
 		"/servertime/1930/05/11?name=Edsger%20W.%20Dijkstra",
+		"/servertime/1934/02/15?name=Niklaus%20Wirth",
 		"/example.txt",
 	}
 
-	expectStr := `code [0], error [example error message]
+	expectStr := `=== Directive 0 ===
+cgi /servertime {.}/test/example
+--- Request /servertime ---
+code [0], error [example error message]
 [---] [---] [---] [quixote] [] []
+--- Request /servertime/1930/05/11?name=Edsger%20W.%20Dijkstra ---
 code [0], error [example error message]
 [/1930/05/11] [---] [---] [---] [name=Edsger%20W.%20Dijkstra] [quixote]
+--- Request /servertime/1934/02/15?name=Niklaus%20Wirth ---
+code [0], error [example error message]
+[/1934/02/15] [---] [---] [---] [name=Niklaus%20Wirth] [quixote]
+--- Request /example.txt ---
+=== Directive 1 ===
+cgi {
+  match /servertime
+  except /servertime/1934
+  exec {.}/test/example --example
+  env CGI_GLOBAL=12
+}
+--- Request /servertime ---
 code [0], error [example error message]
 [---] [12] [--example] [quixote] [] []
+--- Request /servertime/1930/05/11?name=Edsger%20W.%20Dijkstra ---
 code [0], error [example error message]
 [/1930/05/11] [---] [12] [--example] [name=Edsger%20W.%20Dijkstra] [quixote]
+--- Request /servertime/1934/02/15?name=Niklaus%20Wirth ---
+--- Request /example.txt ---
 `
 
 	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
@@ -89,9 +110,11 @@ code [0], error [example error message]
 						fmt.Fprintf(&buf, "code [%d], error [%s]\n", code, err)
 					}
 				}))
-				for putJ := 0; putJ < len(putList) && err == nil; putJ++ {
+				fmt.Fprintf(&buf, "=== Directive %d ===\n%s\n", dirJ, directiveList[dirJ])
+				for reqJ := 0; reqJ < len(requestList) && err == nil; reqJ++ {
 					var res *http.Response
-					res, err = http.Get(srv.URL + putList[putJ])
+					fmt.Fprintf(&buf, "--- Request %s ---\n", requestList[reqJ])
+					res, err = http.Get(srv.URL + requestList[reqJ])
 					if err == nil {
 						_, err = buf.ReadFrom(res.Body)
 						res.Body.Close()

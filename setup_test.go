@@ -53,6 +53,8 @@ func Example_rule() {
 	var strList = []string{
 		`cgi {
   match *.lua *.luac
+  except init.lua init.luac
+  except utility.lua
   exec /usr/bin/lua /usr/local/cgi-bin/{match}
   pass_env LUA_PATH LUA_CPATH
  }`,
@@ -82,6 +84,9 @@ func Example_rule() {
 	// Rule 0
 	//   Match 0: *.lua
 	//   Match 1: *.luac
+	//   Except 0: init.lua
+	//   Except 1: init.luac
+	//   Except 2: utility.lua
 	//   Exe: /usr/bin/lua
 	//   Arg 0: /usr/local/cgi-bin/{match}
 	//   Pass env 0: LUA_PATH
@@ -115,6 +120,7 @@ func TestSetup(t *testing.T) {
 
 		`0:cgi {
   match *.lua *.luac
+  except init.lua
   exec /usr/bin/lua /usr/local/cgi-bin/{match}
   pass_env LUA_PATH LUA_CPATH
  }
@@ -150,6 +156,18 @@ cgi {
 		`1:cgi {
   match /*.pl
   exec
+}`,
+
+		`1:cgi {
+  match /*.pl
+  except
+  exec /usr/bin/perl
+}`,
+
+		`0:cgi {
+  match /*.pl
+  except init.pl
+  exec /usr/bin/perl
 }`,
 
 		`1:cgi {

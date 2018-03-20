@@ -53,6 +53,18 @@ func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
 	return false, "", ""
 }
 
+// excluded returns true if the request string (reqStr) matches any of the
+// pattern strings (patterns), false otherwise. patterns use glob notation; see
+// path/Match for matching details. If the pattern is invalid (for example,
+// contains an unpaired "["), false is returned.
+func excluded(reqStr string, patterns []string) (ok bool) {
+	ln := len(patterns)
+	for j := 0; j < ln && !ok; j++ {
+		ok, _, _ = match(reqStr, patterns[j])
+	}
+	return
+}
+
 // currentDir returns the current working directory
 func currentDir() (wdStr string) {
 	wdStr, _ = filepath.Abs(".")
@@ -95,17 +107,20 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 		for _, matchStr := range rule.matches {
 			ok, lfStr, rtStr := match(r.URL.Path, matchStr)
 			if ok {
-				var buf bytes.Buffer
-				// Retrieve name of remote user that was set by some downstream middleware,
-				// possibly basicauth.
-				remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
-				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
-				cgiHnd.Stderr = &buf
-				cgiHnd.ServeHTTP(w, r)
-				if buf.Len() > 0 {
-					err = errors.New(trim(buf.String()))
+				ok = !excluded(r.URL.Path, rule.exceptions)
+				if ok {
+					var buf bytes.Buffer
+					// Retrieve name of remote user that was set by some downstream middleware,
+					// possibly basicauth.
+					remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
+					cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
+					cgiHnd.Stderr = &buf
+					cgiHnd.ServeHTTP(w, r)
+					if buf.Len() > 0 {
+						err = errors.New(trim(buf.String()))
+					}
+					return
 				}
-				return
 			}
 		}
 	}
