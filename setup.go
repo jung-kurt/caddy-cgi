@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Kurt Jung (Gmail: kurt.w.jung)
+ * Copyright (c) 2017-2018 Kurt Jung (Gmail: kurt.w.jung)
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -120,7 +120,7 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 				switch val {
 				case "match": // [1..n]
 					err = parseMatch(&rule, args)
-				case "except":
+				case "except": // [0..n]
 					err = parseExcept(&rule, args)
 				case "exec": // [1]
 					err = parseExec(&rule, args)
@@ -128,6 +128,8 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 					err = parseEnv(&rule.envs, args)
 				case "pass_env": // [0..n]
 					rule.passEnvs = append(rule.passEnvs, args...)
+				case "empty_env": // [0..n]
+					rule.emptyEnvs = append(rule.emptyEnvs, args...)
 				case "}":
 					loop = false
 				}

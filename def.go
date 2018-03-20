@@ -26,4 +26,6 @@ type ruleType struct {
 	envs [][2]string // [0..n]
 	// Environment keys to pass through for all apps
 	passEnvs []string // [0..n]
+	// Environment keys to send with empty values
+	emptyEnvs []string // [0..n]
 }

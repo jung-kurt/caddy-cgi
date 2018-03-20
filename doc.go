@@ -160,6 +160,7 @@ looks like this:
 		exec script [args...]
 		env key1=val1 [key2=val2...]
 		pass_env key1 [key2...]
+		empty_env key1 [key2...]
 	}
 
 For example,
@@ -170,16 +171,23 @@ For example,
 		exec /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
 		env DB=/usr/local/share/app/app.db SECRET=/usr/local/share/app/secret
 		pass_env HOME UID
+		empty_env CGI_LOCAL
 	}
 
 With the advanced syntax, the exec subdirective must appear exactly once. The
-match subdirective must appear at least once. The env, pass_env, and
-except subdirectives can appear any reasonable number of times.
+match subdirective must appear at least once. The env, pass_env,
+empty_env, and except subdirectives can appear any reasonable number of
+times.
 
 The except subdirective uses the same pattern matching logic that is used
 with the match subdirective. Any request that matches a match pattern is
 then checked with the patterns in except, if any. If any matches are made
 with the except pattern, the request is rejected.
+
+The empty_env subdirective is used to pass one or more empty environment
+variables. Some CGI scripts may expect the server to pass certain empty
+variables rather than leaving them unset. This subdirective allows you to deal
+with those situations.
 
 The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.

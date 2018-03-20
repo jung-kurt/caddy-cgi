@@ -36,5 +36,8 @@ func printRules(rules []ruleType) {
 		for k, str := range r.passEnvs {
 			printf("  Pass env %d: %s\n", k, str)
 		}
+		for k, str := range r.emptyEnvs {
+			printf("  Empty env %d: %s\n", k, str)
+		}
 	}
 }

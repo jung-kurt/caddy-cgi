@@ -55,6 +55,7 @@ func TestServe(t *testing.T) {
   except /servertime/1934
   exec {.}/test/example --example
   env CGI_GLOBAL=12
+  empty_env CGI_LOCAL
 }`,
 	}
 
@@ -69,13 +70,28 @@ func TestServe(t *testing.T) {
 cgi /servertime {.}/test/example
 --- Request /servertime ---
 code [0], error [example error message]
-[---] [---] [---] [quixote] [] []
+PATH_INFO []
+CGI_GLOBAL []
+Arg 1 []
+QUERY_STRING []
+HTTP_TOKEN_CLAIM_USER [quixote]
+CGI_LOCAL is unset
 --- Request /servertime/1930/05/11?name=Edsger%20W.%20Dijkstra ---
 code [0], error [example error message]
-[/1930/05/11] [---] [---] [---] [name=Edsger%20W.%20Dijkstra] [quixote]
+PATH_INFO [/1930/05/11]
+CGI_GLOBAL []
+Arg 1 []
+QUERY_STRING [name=Edsger%20W.%20Dijkstra]
+HTTP_TOKEN_CLAIM_USER [quixote]
+CGI_LOCAL is unset
 --- Request /servertime/1934/02/15?name=Niklaus%20Wirth ---
 code [0], error [example error message]
-[/1934/02/15] [---] [---] [---] [name=Niklaus%20Wirth] [quixote]
+PATH_INFO [/1934/02/15]
+CGI_GLOBAL []
+Arg 1 []
+QUERY_STRING [name=Niklaus%20Wirth]
+HTTP_TOKEN_CLAIM_USER [quixote]
+CGI_LOCAL is unset
 --- Request /example.txt ---
 === Directive 1 ===
 cgi {
@@ -83,17 +99,27 @@ cgi {
   except /servertime/1934
   exec {.}/test/example --example
   env CGI_GLOBAL=12
+  empty_env CGI_LOCAL
 }
 --- Request /servertime ---
 code [0], error [example error message]
-[---] [12] [--example] [quixote] [] []
+PATH_INFO []
+CGI_GLOBAL [12]
+Arg 1 [--example]
+QUERY_STRING []
+HTTP_TOKEN_CLAIM_USER [quixote]
+CGI_LOCAL is set to []
 --- Request /servertime/1930/05/11?name=Edsger%20W.%20Dijkstra ---
 code [0], error [example error message]
-[/1930/05/11] [---] [12] [--example] [name=Edsger%20W.%20Dijkstra] [quixote]
+PATH_INFO [/1930/05/11]
+CGI_GLOBAL [12]
+Arg 1 [--example]
+QUERY_STRING [name=Edsger%20W.%20Dijkstra]
+HTTP_TOKEN_CLAIM_USER [quixote]
+CGI_LOCAL is set to []
 --- Request /servertime/1934/02/15?name=Niklaus%20Wirth ---
 --- Request /example.txt ---
 `
-
 	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
 	// system call is made to respond to the request.
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {

@@ -89,6 +89,9 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	for _, env := range rule.envs {
 		envAdd(env[0], env[1])
 	}
+	for _, env := range rule.emptyEnvs {
+		cgiHnd.Env = append(cgiHnd.Env, env+"=")
+	}
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)

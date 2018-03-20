@@ -57,6 +57,7 @@ func Example_rule() {
   except utility.lua
   exec /usr/bin/lua /usr/local/cgi-bin/{match}
   pass_env LUA_PATH LUA_CPATH
+  empty_env REMOTE_USER CONTENT_TYPE
  }`,
 		`cgi {
   match *.py *.pyc
@@ -91,6 +92,8 @@ func Example_rule() {
 	//   Arg 0: /usr/local/cgi-bin/{match}
 	//   Pass env 0: LUA_PATH
 	//   Pass env 1: LUA_CPATH
+	//   Empty env 0: REMOTE_USER
+	//   Empty env 1: CONTENT_TYPE
 	// Rule 0
 	//   Match 0: *.py
 	//   Match 1: *.pyc
