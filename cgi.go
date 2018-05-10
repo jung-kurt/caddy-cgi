@@ -33,34 +33,67 @@ import (
 // patternStr uses glob notation; see path/Match for matching details. If the
 // pattern is invalid (for example, contains an unpaired "["), false is
 // returned.
-func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
+func match(requestStr string, patterns []string) (ok bool, prefixStr, suffixStr string) {
 	var str, last string
 	var err error
-	str = reqStr
-	last = ""
-	for last != str && !ok && err == nil {
-		ok, err = path.Match(patternStr, str)
-		if err == nil {
-			if !ok {
-				last = str
-				str = filepath.Dir(str)
+	ln := len(patterns)
+	for j := 0; j < ln && !ok; j++ {
+		pattern := patterns[j]
+		str = requestStr
+		last = ""
+		for last != str && !ok && err == nil {
+			ok, err = path.Match(pattern, str)
+			if err == nil {
+				if ok {
+					prefixStr = str
+					suffixStr = requestStr[len(str):]
+				} else {
+					last = str
+					str = filepath.Dir(str)
+				}
 			}
 		}
 	}
-	if ok && err == nil {
-		return true, str, reqStr[len(str):]
-	}
-	return false, "", ""
+	return
 }
+
+// func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
+// 	var str, last string
+// 	var err error
+// 	str = reqStr
+// 	last = ""
+// 	for last != str && !ok && err == nil {
+// 		ok, err = path.Match(patternStr, str)
+// 		if err == nil {
+// 			if !ok {
+// 				last = str
+// 				str = filepath.Dir(str)
+// 			}
+// 		}
+// 	}
+// 	if ok && err == nil {
+// 		return true, str, reqStr[len(str):]
+// 	}
+// 	return false, "", ""
+// }
 
 // excluded returns true if the request string (reqStr) matches any of the
 // pattern strings (patterns), false otherwise. patterns use glob notation; see
 // path/Match for matching details. If the pattern is invalid (for example,
 // contains an unpaired "["), false is returned.
 func excluded(reqStr string, patterns []string) (ok bool) {
+	var err error
+	var match bool
+
 	ln := len(patterns)
 	for j := 0; j < ln && !ok; j++ {
-		ok, _, _ = match(reqStr, patterns[j])
+		match, err = path.Match(patterns[j], reqStr)
+		if err == nil {
+			if match {
+				ok = true
+				// fmt.Printf("[%s] is excluded by rule [%s]\n", reqStr, patterns[j])
+			}
+		}
 	}
 	return
 }
@@ -107,25 +140,26 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int, err error) {
 	rep := httpserver.NewReplacer(r, nil, "")
 	for _, rule := range h.rules {
-		for _, matchStr := range rule.matches {
-			ok, lfStr, rtStr := match(r.URL.Path, matchStr)
+		// for _, matchStr := range rule.matches {
+		// ok, lfStr, rtStr := match(r.URL.Path, matchStr)
+		ok, lfStr, rtStr := match(r.URL.Path, rule.matches)
+		if ok {
+			ok = !excluded(r.URL.Path, rule.exceptions)
 			if ok {
-				ok = !excluded(r.URL.Path, rule.exceptions)
-				if ok {
-					var buf bytes.Buffer
-					// Retrieve name of remote user that was set by some downstream middleware,
-					// possibly basicauth.
-					remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
-					cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
-					cgiHnd.Stderr = &buf
-					cgiHnd.ServeHTTP(w, r)
-					if buf.Len() > 0 {
-						err = errors.New(trim(buf.String()))
-					}
-					return
+				var buf bytes.Buffer
+				// Retrieve name of remote user that was set by some downstream middleware,
+				// possibly basicauth.
+				remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
+				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
+				cgiHnd.Stderr = &buf
+				cgiHnd.ServeHTTP(w, r)
+				if buf.Len() > 0 {
+					err = errors.New(trim(buf.String()))
 				}
+				return
 			}
 		}
+		// }
 	}
 	return h.next.ServeHTTP(w, r)
 }

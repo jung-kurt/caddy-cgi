@@ -52,7 +52,7 @@ func TestServe(t *testing.T) {
 		`cgi /servertime {.}/test/example`,
 		`cgi {
   match /servertime
-  except /servertime/1934
+  except /servertime/1934/*/*
   exec {.}/test/example --example
   env CGI_GLOBAL=12
   empty_env CGI_LOCAL
@@ -96,7 +96,7 @@ CGI_LOCAL is unset
 === Directive 1 ===
 cgi {
   match /servertime
-  except /servertime/1934
+  except /servertime/1934/*/*
   exec {.}/test/example --example
   env CGI_GLOBAL=12
   empty_env CGI_LOCAL
@@ -164,7 +164,7 @@ CGI_LOCAL is set to []
 func TestMatches(t *testing.T) {
 	var ok bool
 	var prefixStr, suffixStr string
-	// [request, pattern, expected success:0/expected error:1, prefix, suffix]
+	// [request, pattern, expected success:1/expected error:0, prefix, suffix]
 	list := [][]string{
 		{"/foo/bar/baz", "/foo", "1", "/foo", "/bar/baz"},
 		{"/foo/bar/baz", "/foo/*/baz", "1", "/foo/bar/baz", ""},
@@ -173,15 +173,34 @@ func TestMatches(t *testing.T) {
 	}
 
 	for _, rec := range list {
-		ok, prefixStr, suffixStr = match(rec[0], rec[1])
+		ok, prefixStr, suffixStr = match(rec[0], []string{rec[1]})
 		if ok {
-			if rec[2] != "1" || rec[3] != prefixStr || rec[4] != suffixStr {
+			if rec[2] == "0" || rec[3] != prefixStr || rec[4] != suffixStr {
 				t.Fatalf("expected mismatch for \"%s\" and \"%s\"", rec[0], rec[1])
 			}
 		} else {
-			if rec[2] != "0" {
+			if rec[2] == "1" {
 				t.Fatalf("expected match for \"%s\" and \"%s\"", rec[0], rec[1])
 			}
+		}
+	}
+}
+
+func TestExceptions(t *testing.T) {
+	// [request, except pattern, expected success:1/expected error:0]
+	list := [][]string{
+		{"/foo/bar/baz.png", "/*/*/*.png", "1"},
+		{"/foo/bar/baz.png", "/foo/*/baz*", "1"},
+		{"/foo/bar/baz.png", "/foo/bar/baz.jpg", "0"},
+		{"/foo/bar/baz.png", "foo/bar", "0"},
+	}
+
+	for _, rec := range list {
+		ok := excluded(rec[0], []string{rec[1]})
+		if ok && rec[2] == "0" {
+			t.Fatalf("unexpected exception for \"%s\" and \"%s\"", rec[0], rec[1])
+		} else if !ok && rec[2] == "1" {
+			t.Fatalf("expected exception for \"%s\" and \"%s\"", rec[0], rec[1])
 		}
 	}
 }

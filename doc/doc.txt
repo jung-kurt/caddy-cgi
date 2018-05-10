@@ -225,9 +225,12 @@ With the advanced syntax, the `exec` subdirective must appear exactly once. The
 times.
 
 The `except` subdirective uses the same pattern matching logic that is used
-with the `match` subdirective. Any request that matches a `match` pattern is
-then checked with the patterns in `except`, if any. If any matches are made
-with the `except` pattern, the request is rejected.
+with the `match` subdirective except that the request must match a rule fully;
+no request path prefix matching is performed. Any request that matches a
+`match` pattern is then checked with the patterns in `except`, if any. If any
+matches are made with the `except` pattern, the request is rejected and passed
+along to subsequent handlers. This is a convenient way to have static file
+resources served properly rather than being confused as CGI applications.
 
 The `empty_env` subdirective is used to pass one or more empty environment
 variables. Some CGI scripts may expect the server to pass certain empty
