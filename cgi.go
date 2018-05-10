@@ -57,26 +57,6 @@ func match(requestStr string, patterns []string) (ok bool, prefixStr, suffixStr 
 	return
 }
 
-// func match(reqStr, patternStr string) (ok bool, prefixStr, suffixStr string) {
-// 	var str, last string
-// 	var err error
-// 	str = reqStr
-// 	last = ""
-// 	for last != str && !ok && err == nil {
-// 		ok, err = path.Match(patternStr, str)
-// 		if err == nil {
-// 			if !ok {
-// 				last = str
-// 				str = filepath.Dir(str)
-// 			}
-// 		}
-// 	}
-// 	if ok && err == nil {
-// 		return true, str, reqStr[len(str):]
-// 	}
-// 	return false, "", ""
-// }
-
 // excluded returns true if the request string (reqStr) matches any of the
 // pattern strings (patterns), false otherwise. patterns use glob notation; see
 // path/Match for matching details. If the pattern is invalid (for example,
@@ -140,8 +120,6 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int, err error) {
 	rep := httpserver.NewReplacer(r, nil, "")
 	for _, rule := range h.rules {
-		// for _, matchStr := range rule.matches {
-		// ok, lfStr, rtStr := match(r.URL.Path, matchStr)
 		ok, lfStr, rtStr := match(r.URL.Path, rule.matches)
 		if ok {
 			ok = !excluded(r.URL.Path, rule.exceptions)
@@ -159,7 +137,6 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				return
 			}
 		}
-		// }
 	}
 	return h.next.ServeHTTP(w, r)
 }
