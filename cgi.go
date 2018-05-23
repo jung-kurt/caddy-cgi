@@ -130,7 +130,11 @@ func (h handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) (code int
 				remoteUser, _ := r.Context().Value(httpserver.RemoteUserCtxKey).(string) // Blank if not set
 				cgiHnd := setupCall(h, rule, lfStr, rtStr, rep, r.Header, remoteUser)
 				cgiHnd.Stderr = &buf
-				cgiHnd.ServeHTTP(w, r)
+				if rule.inspect {
+					inspect(cgiHnd, w, r, rep)
+				} else {
+					cgiHnd.ServeHTTP(w, r)
+				}
 				if buf.Len() > 0 {
 					err = errors.New(trim(buf.String()))
 				}

@@ -171,6 +171,20 @@ cgi {
   match /*.pl
   except init.pl
   exec /usr/bin/perl
+  inspect
+}`,
+
+		`1:cgi {
+  match /*.pl
+  except init.pl
+  exec /usr/bin/perl
+  inspect foo
+}`,
+
+		`0:cgi {
+  match /*.pl
+  except init.pl
+  exec /usr/bin/perl
 }`,
 
 		`1:cgi {

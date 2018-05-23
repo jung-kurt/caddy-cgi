@@ -28,4 +28,6 @@ type ruleType struct {
 	passEnvs []string // [0..n]
 	// Environment keys to send with empty values
 	emptyEnvs []string // [0..n]
+	// True to return inspection page rather than call CGI executable
+	inspect bool
 }

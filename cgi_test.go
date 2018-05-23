@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/mholt/caddy"
@@ -202,5 +203,44 @@ func TestExceptions(t *testing.T) {
 		} else if !ok && rec[2] == "1" {
 			t.Fatalf("expected exception for \"%s\" and \"%s\"", rec[0], rec[1])
 		}
+	}
+}
+
+func TestInspect(t *testing.T) {
+	var err error
+	var hnd handlerType
+	var srv *httptest.Server
+	var buf bytes.Buffer
+
+	block := `cgi {
+  match /foo/*
+  exec bar
+  inspect
+}`
+
+	hnd, err = handlerGet(block, "./test")
+	if err == nil {
+		srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, hndErr := hnd.ServeHTTP(w, r)
+			if err == nil && hndErr != nil {
+				err = hndErr
+			}
+		}))
+		var res *http.Response
+		res, err = http.Get(srv.URL + "/foo/bar.tcl")
+		if err == nil {
+			_, err = buf.ReadFrom(res.Body)
+			if err == nil {
+				str := buf.String()
+				if !strings.Contains(str, "CGI for Caddy") {
+					err = fmt.Errorf("unexpected response for \"inspect\" request")
+				}
+			}
+			res.Body.Close()
+		}
+		srv.Close()
+	}
+	if err != nil {
+		t.Fatalf("%s", err)
 	}
 }

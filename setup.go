@@ -91,6 +91,16 @@ func parseExcept(rule *ruleType, args []string) (err error) {
 	return
 }
 
+// parseInspect parses a line beginning with the "inspect" subdirective
+func parseInspect(rule *ruleType, args []string) (err error) {
+	if len(args) == 0 {
+		rule.inspect = true
+	} else {
+		err = errorf("not expecting any arguments to follow \"inspect\"")
+	}
+	return
+}
+
 // parseEnv parses a list of "key = value" pairs on a line
 func parseEnv(envs *[][2]string, args []string) (err error) {
 	count := len(args)
@@ -130,6 +140,8 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 					rule.passEnvs = append(rule.passEnvs, args...)
 				case "empty_env": // [0..n]
 					rule.emptyEnvs = append(rule.emptyEnvs, args...)
+				case "inspect": // [0]
+					err = parseInspect(&rule, args)
 				case "}":
 					loop = false
 				}

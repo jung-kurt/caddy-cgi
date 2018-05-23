@@ -180,9 +180,12 @@ empty_env, and except subdirectives can appear any reasonable number of
 times.
 
 The except subdirective uses the same pattern matching logic that is used
-with the match subdirective. Any request that matches a match pattern is
-then checked with the patterns in except, if any. If any matches are made
-with the except pattern, the request is rejected.
+with the match subdirective except that the request must match a rule fully;
+no request path prefix matching is performed. Any request that matches a
+match pattern is then checked with the patterns in except, if any. If any
+matches are made with the except pattern, the request is rejected and passed
+along to subsequent handlers. This is a convenient way to have static file
+resources served properly rather than being confused as CGI applications.
 
 The empty_env subdirective is used to pass one or more empty environment
 variables. Some CGI scripts may expect the server to pass certain empty
@@ -217,6 +220,64 @@ will be available with the following environment variables
 
 All values are conveyed as strings, so some conversion may be necessary in your
 program. No placeholder substitutions are made on these values.
+
+Troubleshooting
+
+If you run into unexpected results with the CGI plugin, you are able to examine
+the environment in which your CGI application runs. To enter inspection mode,
+add the subdirective inspect to your CGI configuration block. This is a
+development option that should not be used in production. When in inspection
+mode, the plugin will respond to matching requests with a page that displays
+variables of interest. In particular, it will show the replacement value of
+{match} and the environment variables to which your CGI application has
+access.
+
+For example, consider this example CGI block:
+
+	cgi {
+		match /wapp/*
+		exec /usr/local/bin/wapptclsh /home/quixote/projects{match}.tcl
+		pass_env HOME LANG
+		env DB=/usr/local/share/app/app.db SECRET=/usr/local/share/app/secret
+		inspect
+	}
+
+When you request a matching URL, for example,
+
+	https://example.com/wapp/hello.tcl
+
+the Caddy server will deliver a text page similar to the following. The CGI
+application (in this case, wapptclsh) will not be called.
+
+	CGI for Caddy inspection page
+
+	Executable .................... /usr/local/bin/wapptclsh
+	  Arg 1 ....................... /home/quixote/projects/wapp/hello.tcl
+	Root .......................... /
+	Dir ........................... /home/quixote/www
+	Environment
+	  DB .......................... /usr/local/share/app/app.db
+	  PATH_INFO ...................
+	  REMOTE_USER .................
+	  SCRIPT_EXEC ................. /usr/local/bin/wapptclsh /home/quixote/projects/wapp/hello.tcl
+	  SCRIPT_FILENAME ............. /usr/local/bin/wapptclsh
+	  SCRIPT_NAME ................. /wapp/hello
+	  SECRET ...................... /usr/local/share/app/secret
+	Inherited environment
+	  HOME ........................ /home/quixote
+	  LANG ........................ en_US.UTF-8
+	Placeholders
+	  {.} ......................... /home/quixote/go/src/github.com/mholt/caddy/caddy
+	  {host} ...................... example.com
+	  {match} ..................... /wapp/hello
+	  {method} .................... GET
+	  {root} ...................... /home/quixote/www
+	  {when} ...................... 23/May/2018:14:49:55 -0400
+
+This information can be used to diagnose problems with how a CGI application is
+called.
+
+To return to operation mode, remove or comment out the inspect subdirective.
 
 Environment Variable Example
 
