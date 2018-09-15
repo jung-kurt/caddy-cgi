@@ -167,19 +167,20 @@ func cgiParse(c *caddy.Controller) (rules []ruleType, err error) {
 		args := c.RemainingArgs()
 		// printf("Line %2d: [%s] [%s]\n", c.Line(), val, join(args, ", "))
 		if val == "cgi" {
-			if len(args) == 0 { // advanced brace-block syntax
+			switch {
+			case len(args) == 0: // advanced brace-block syntax
 				var rule ruleType
 				rule, err = parseBlock(c)
 				if err == nil {
 					rules = append(rules, rule)
 				}
-			} else if len(args) >= 2 { // simple one-line syntax: one match, exe, args
+			case len(args) >= 2: // simple one-line syntax: one match, exe, args
 				rules = append(rules, ruleType{
 					matches: []string{args[0]},
 					exe:     args[1],
 					args:    args[2:],
 				})
-			} else {
+			default:
 				err = errorf("expecting at least 2 arguments for simple directive, got %d", len(args))
 			}
 		} else {
