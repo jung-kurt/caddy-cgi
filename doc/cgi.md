@@ -167,6 +167,8 @@ looks like this:
 >   [env][key] [key1=val1 [key2=val2...]][subkey]
 >   [pass_env][key] [key1 [key2...]][subkey]
 >   [empty_env][key] [key1 [key2...]][subkey]
+>   [pass_all_env][key]
+>   [inspect][key]
 > }
 
 For example,
@@ -183,7 +185,7 @@ For example,
 With the advanced syntax, the `exec` subdirective must appear exactly once. The
 `match` subdirective must appear at least once. The `env`, `pass_env`,
 `empty_env`, and `except` subdirectives can appear any reasonable number of
-times.
+times. `pass_all_env` and `inspect` may appear once.
 
 The `except` subdirective uses the same pattern matching logic that is used
 with the `match` subdirective except that the request must match a rule fully;
@@ -204,7 +206,17 @@ placeholder substitution, just as with the script name and arguments.
 If your CGI application runs properly at the command line but fails to run from
 Caddy it is possible that certain environment variables may be missing. For
 example, the ruby gem loader evidently requires the `HOME` environment variable
-to be set; you can do this with the subdirective `pass_env HOME`.
+to be set; you can do this with the subdirective `pass_env HOME`. Another class
+of problematic applications require the `COMPUTERNAME` variable.
+
+The `pass_all_env` subdirective instructs Caddy to pass each environment
+variable it knows about to the CGI excutable. This addresses a common
+frustration that is caused when an executable requires an environment variable
+and fails without a descriptive error message when the variable cannot be
+found. These applications often run fine from the command prompt but fail when
+invoked with CGI. The risk with this subdirective is that a lot of server
+information is shared with the CGI executable. Use this subdirective only with
+CGI applications that you trust not to leak this information.
 
 ### JSON web tokens
 
