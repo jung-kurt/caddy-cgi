@@ -21,8 +21,10 @@ import (
 	"errors"
 	"net/http"
 	"net/http/cgi"
+	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 )
@@ -84,6 +86,18 @@ func currentDir() (wdStr string) {
 	return
 }
 
+// passAll returns a slice of strings made up of each environment key
+func passAll() (list []string) {
+	envList := os.Environ() // ["HOME=/home/foo", "LVL=2", ...]
+	for _, str := range envList {
+		pos := strings.Index(str, "=")
+		if pos > 0 {
+			list = append(list, str[:pos])
+		}
+	}
+	return
+}
+
 // setupCall instantiates a CGI handler based on the incoming request and the
 // configuration rule that it matches.
 func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
@@ -108,7 +122,11 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	envAdd("PATH_INFO", rtStr)
 	envAdd("SCRIPT_FILENAME", cgiHnd.Path)
 	envAdd("SCRIPT_NAME", lfStr)
-	cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
+	if rule.passAll {
+		cgiHnd.InheritEnv = passAll()
+	} else {
+		cgiHnd.InheritEnv = append(cgiHnd.InheritEnv, rule.passEnvs...)
+	}
 	for _, str := range rule.args {
 		cgiHnd.Args = append(cgiHnd.Args, rep.Replace(str))
 	}

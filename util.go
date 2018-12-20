@@ -27,6 +27,8 @@ func printRules(rules []ruleType) {
 			printf("  Except %d: %s\n", k, except)
 		}
 		printf("  Exe: %s\n", r.exe)
+		printf("  Pass all: %v\n", r.passAll)
+		printf("  Inspect: %v\n", r.inspect)
 		for k, str := range r.args {
 			printf("  Arg %d: %s\n", k, str)
 		}

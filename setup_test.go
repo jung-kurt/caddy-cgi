@@ -89,6 +89,8 @@ func Example_rule() {
 	//   Except 1: init.luac
 	//   Except 2: utility.lua
 	//   Exe: /usr/bin/lua
+	//   Pass all: false
+	//   Inspect: false
 	//   Arg 0: /usr/local/cgi-bin/{match}
 	//   Pass env 0: LUA_PATH
 	//   Pass env 1: LUA_CPATH
@@ -98,14 +100,20 @@ func Example_rule() {
 	//   Match 0: *.py
 	//   Match 1: *.pyc
 	//   Exe: /usr/bin/python
+	//   Pass all: false
+	//   Inspect: false
 	//   Arg 0: -s
 	//   Env 0: PYTHONSTARTUP=[/usr/share/init.py]
 	// Rule 0
 	//   Match 0: /fossil
 	//   Exe: /var/www/fossil
+	//   Pass all: false
+	//   Inspect: false
 	// Rule 0
 	//   Match 0: /report/week
 	//   Exe: /var/www/report
+	//   Pass all: false
+	//   Inspect: false
 	//   Arg 0: --mode=week
 	//   Env 0: NO_BANANAS=[YES]
 	//   Env 1: NAME=[Don Quixote]

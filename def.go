@@ -30,4 +30,6 @@ type ruleType struct {
 	emptyEnvs []string // [0..n]
 	// True to return inspection page rather than call CGI executable
 	inspect bool
+	// True to pass all environment variables to CGI executable
+	passAll bool
 }
