@@ -287,7 +287,9 @@ func TestInspect(t *testing.T) {
 
 	block := `cgi {
   match /foo/*
-  exec bar
+  exec bar --baz --quux
+  pass_env HOME
+  env VERY_LONG_KEY_INTENDED_TO_TEST_INSPECTION_REPORT=foo
   inspect
 }`
 
@@ -305,6 +307,7 @@ func TestInspect(t *testing.T) {
 			_, err = buf.ReadFrom(res.Body)
 			if err == nil {
 				str := buf.String()
+				fmt.Printf("%s\n", str)
 				if !strings.Contains(str, "CGI for Caddy") {
 					err = fmt.Errorf("unexpected response for \"inspect\" request")
 				}
