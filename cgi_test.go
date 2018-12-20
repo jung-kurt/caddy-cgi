@@ -185,7 +185,8 @@ func checkEnv(envStr string) (err error) {
 			k := actualStr[:pos]
 			_, ok := mp[k]
 			if !ok {
-				err = fmt.Errorf("environment key \"%s\" not found in CGI environment", k)
+				// err = fmt.Errorf("environment key \"%s\" not found in CGI environment", k)
+				fmt.Printf("environment key \"%s\" not found in CGI environment", k)
 			}
 		}
 	}
