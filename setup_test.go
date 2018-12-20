@@ -222,6 +222,12 @@ cgi {
  }`,
 
 		`1:cgi {
+  match /
+  exec /bin/foo
+  pass_all_env baz
+  }`,
+
+		`1:cgi {
   match
   match /foo /bin/foo`,
 
