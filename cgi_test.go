@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"runtime"
 	"strings"
 	"testing"
@@ -155,6 +156,78 @@ CGI_LOCAL is set to []
 			if expectStr != gotStr {
 				err = errorf("expected %s, got %s\n", expectStr, gotStr)
 			}
+		}
+		if err != nil {
+			t.Fatalf("%s", err)
+		}
+	}
+}
+
+func checkEnv(envStr string) (err error) {
+	// envStr is reported by CGI program invoked with pass_all_env. It looks like
+	// "key1=val1\nkey2=val2..." Place keys into map and make sure all actual
+	// environment variables are included in this map. Some environment values get
+	// legitimately changed for spawned executable, so verify keys only.
+	list := strings.Split(envStr, "\n")
+	mp := make(map[string]bool)
+	for _, pr := range list {
+		pos := strings.Index(pr, "=")
+		if pos > 0 {
+			mp[pr[:pos]] = true
+		}
+	}
+	actualList := os.Environ()
+	actualLen := len(actualList)
+	for j := 0; j < actualLen && err == nil; j++ {
+		actualStr := actualList[j]
+		pos := strings.Index(actualStr, "=")
+		if pos > 0 {
+			k := actualStr[:pos]
+			_, ok := mp[k]
+			if !ok {
+				err = fmt.Errorf("environment key \"%s\" not found in CGI environment", k)
+			}
+		}
+	}
+	return
+}
+
+func TestPassAll(t *testing.T) {
+	var err error
+	var code int
+	var hnd handlerType
+	var srv *httptest.Server
+	request := `/full`
+	directive := `cgi {
+match /full
+exec {.}/test/fullenv
+pass_all_env
+}`
+
+	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
+	// system call is made to respond to the request.
+	if runtime.GOOS == "linux" {
+		var buf bytes.Buffer
+		hnd, err = handlerGet(directive, "./test")
+		if err == nil {
+			srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				code, err = hnd.ServeHTTP(w, r)
+				if err != nil {
+					fmt.Fprintf(&buf, "code [%d], error [%s]\n", code, err)
+				}
+			}))
+			fmt.Fprintf(&buf, "=== Directive ===\n%s\n", directive)
+			var res *http.Response
+			fmt.Fprintf(&buf, "--- Request %s ---\n", request)
+			res, err = http.Get(srv.URL + request)
+			if err == nil {
+				_, err = buf.ReadFrom(res.Body)
+				res.Body.Close()
+			}
+			srv.Close()
+		}
+		if err == nil {
+			err = checkEnv(buf.String())
 		}
 		if err != nil {
 			t.Fatalf("%s", err)
