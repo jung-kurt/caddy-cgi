@@ -34,7 +34,6 @@ type kvType struct {
 
 func inspect(hnd cgi.Handler, w http.ResponseWriter, req *http.Request, rep httpserver.Replacer) {
 	var buf bytes.Buffer
-	var err error
 
 	printf := func(format string, args ...interface{}) {
 		fmt.Fprintf(&buf, format, args...)
@@ -102,8 +101,5 @@ func inspect(hnd cgi.Handler, w http.ResponseWriter, req *http.Request, rep http
 	repPrint("{.}", "{host}", "{match}", "{method}", "{root}", "{when}")
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	_, err = buf.WriteTo(w)
-	if err != nil {
-		fmt.Fprintf(hnd.Stderr, "%s", err)
-	}
+	buf.WriteTo(w)
 }
