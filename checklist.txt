@@ -5,4 +5,4 @@ Prior to module release
 git commit -am "Commit message here"
 git tag
 git tag v2.x.y
-git push --tags -u origin v2
+git push --tags -u origin master
