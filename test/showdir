@@ -1,0 +1,6 @@
+#!/bin/bash
+
+printf "Content-type: text/plain\n\n"
+/bin/pwd
+exit 0
+

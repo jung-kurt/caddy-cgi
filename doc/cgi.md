@@ -96,10 +96,11 @@ For example:
 
 When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
-match and invoke the script named /usr/local/cgi-bin/report. Here, it is
-assumed that the script is self-contained, for example a pre-compiled CGI
-application or a shell script. Here is an example of a standalone script,
-similar to one used in the cgi plugin's test suite:
+match and invoke the script named /usr/local/cgi-bin/report. The current
+working directory will be the same as Caddy itself. Here, it is assumed that
+the script is self-contained, for example a pre-compiled CGI application or a
+shell script. Here is an example of a standalone script, similar to one used in
+the cgi plugin's test suite:
 
 	#!/bin/bash
 
@@ -164,6 +165,7 @@ looks like this:
 >   [match][key] [match [match2...]][subkey]
 >   [except][key] [match [match2...]][subkey]
 >   [exec][key] [script [args...]][subkey]
+>   [dir][key] [directory][subkey]
 >   [env][key] [key1=val1 [key2=val2...]][subkey]
 >   [pass_env][key] [key1 [key2...]][subkey]
 >   [empty_env][key] [key1 [key2...]][subkey]
@@ -185,7 +187,10 @@ For example,
 With the advanced syntax, the `exec` subdirective must appear exactly once. The
 `match` subdirective must appear at least once. The `env`, `pass_env`,
 `empty_env`, and `except` subdirectives can appear any reasonable number of
-times. `pass_all_env` and `inspect` may appear once.
+times. `pass_all_env`, `dir` may appear once.
+
+The `dir` subdirective specifies the CGI executable's working directory. If it
+is not specified, Caddy's current working directory is used.
 
 The `except` subdirective uses the same pattern matching logic that is used
 with the `match` subdirective except that the request must match a rule fully;

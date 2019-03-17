@@ -193,6 +193,51 @@ func checkEnv(envStr string) (err error) {
 	return
 }
 
+func TestDir(t *testing.T) {
+	var err error
+	var code int
+	var rsp string
+	var hnd handlerType
+	var srv *httptest.Server
+	request := `/tmpdir`
+	directive := `cgi {
+match /tmpdir
+exec {.}/test/showdir
+dir /tmp
+}`
+
+	// Testing the ServeHTTP method requires OS-specific CGI scripts, because a
+	// system call is made to respond to the request.
+	if runtime.GOOS == "linux" {
+		var buf bytes.Buffer
+		hnd, err = handlerGet(directive, "./test")
+		if err == nil {
+			srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				code, err = hnd.ServeHTTP(w, r)
+				if err != nil {
+					fmt.Fprintf(&buf, "code [%d], error [%s]\n", code, err)
+				}
+			}))
+			var res *http.Response
+			res, err = http.Get(srv.URL + request)
+			if err == nil {
+				_, err = buf.ReadFrom(res.Body)
+				res.Body.Close()
+			}
+			srv.Close()
+		}
+		if err == nil {
+			rsp = strings.TrimSpace(buf.String())
+			if "/tmp" != rsp {
+				err = fmt.Errorf("expecting \"/tmp\", got \"%s\"", rsp)
+			}
+		}
+		if err != nil {
+			t.Fatalf("%s", err)
+		}
+	}
+}
+
 func TestPassAll(t *testing.T) {
 	var err error
 	var code int

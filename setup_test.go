@@ -151,7 +151,27 @@ cgi {
   env MODE=DEV
   pass_env JWT_SECRET
 }`,
-
+		`0:cgi {
+	match /test
+	exec /usr/local/cgi-bin/foo
+	dir /tmp
+}`,
+		`1:cgi {
+	match /test
+	exec /usr/local/cgi-bin/foo
+	dir /tmp /too/many/args
+}`,
+		`1:cgi {
+	match /test
+	exec /usr/local/cgi-bin/foo
+	dir
+}`,
+		`1:cgi {
+	match /test
+	exec /usr/local/cgi-bin/foo
+	dir /tmp
+	dir /oops
+}`,
 		`1:cgi {
   match /foo /foo/script -a
 }`,

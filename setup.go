@@ -60,6 +60,20 @@ func setup(c *caddy.Controller) (err error) {
 	return configureServer(c, httpserver.GetConfig(c))
 }
 
+// parseDir parses an "dir" line
+func parseDir(rule *ruleType, args []string) (err error) {
+	if len(args) == 1 {
+		if rule.dir == "" {
+			rule.dir = args[0]
+		} else {
+			err = errorf("\"dir\" may only be specified once per block")
+		}
+	} else {
+		err = errorf("expecting exactly one argument to follow \"dir\"")
+	}
+	return
+}
+
 // parseExec parses an "exec" line
 func parseExec(rule *ruleType, args []string) (err error) {
 	if len(args) > 0 {
@@ -152,6 +166,8 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 					rule.emptyEnvs = append(rule.emptyEnvs, args...)
 				case "pass_all_env": // [0]
 					err = parseAllEnv(&rule, args)
+				case "dir": // [1]
+					err = parseDir(&rule, args)
 				case "inspect": // [0]
 					err = parseInspect(&rule, args)
 				case "}":

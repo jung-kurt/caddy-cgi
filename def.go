@@ -20,6 +20,8 @@ type ruleType struct {
 	exceptions []string
 	// Name of executable script or binary
 	exe string // [1]
+	// Working directory (default, current Caddy working directory)
+	dir string // [0..1]
 	// Arguments to submit to executable
 	args []string // [0..n]
 	// Environment key value pairs ([0]: key, [1]: value) for this particular app

@@ -108,6 +108,9 @@ func setupCall(h handlerType, rule ruleType, lfStr, rtStr string,
 	rep.Set("match", lfStr)
 	rep.Set(".", currentDir())
 	cgiHnd.Path = rep.Replace(rule.exe)
+	if rule.dir != "" {
+		cgiHnd.Dir = rule.dir
+	}
 	cgiHnd.Env = append(cgiHnd.Env, "REMOTE_USER="+username)
 	envAdd := func(key, val string) {
 		val = rep.Replace(val)
