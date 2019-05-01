@@ -6,6 +6,9 @@
 [![Build Status][badge-build]][travis]
 [![Report][badge-report]][report]
 
+Package cgi implements the common gateway interface ([CGI][cgi-wiki]) for
+[Caddy][caddy], a modern, full-featured, easy-to-use web server.
+
 This plugin lets you generate dynamic content on your website by means of
 command line scripts. To collect information about the inbound HTTP request,
 your script examines certain environment variables such as

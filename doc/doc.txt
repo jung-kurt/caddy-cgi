@@ -9,19 +9,7 @@
 [![Build Status][badge-build]][travis]
 [![Report][badge-report]][report]
 
-~~
----
-title: cgi
-type: docs
-directive: true
-plugin: true
-link: https://github.com/jung-kurt/caddy-cgi
----
-
-cgi implements the common gateway interface ([CGI][cgi-wiki]). This directive
-may be used multiple times with different match patterns.
-
-~rg~
+~rcg~
 Package cgi implements the common gateway interface ([CGI][cgi-wiki]) for
 [Caddy][caddy], a modern, full-featured, easy-to-use web server.
 
