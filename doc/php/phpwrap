@@ -1,3 +1,0 @@
-#!/bin/bash
-
-REDIRECT_STATUS=1 SCRIPT_FILENAME="${1}" /usr/local/bin/php-cgi -c /path/to/php-cgi.ini
