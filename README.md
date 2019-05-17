@@ -47,11 +47,17 @@ Serving dynamic content exposes your server to more potential threats
 than serving static pages. There are a number of considerations of which
 you should be aware when using CGI applications.
 
+<div class="warning">
+
 **CGI scripts should be located outside of Caddy’s document root.**
 Otherwise, an inadvertent misconfiguration could result in Caddy
 delivering the script as an ordinary static resource. At best, this
 could merely confuse the site visitor. At worst, it could expose
 sensitive internal information that should not leave the server.
+
+</div>
+
+<div class="warning">
 
 **Mistrust the contents of `PATH_INFO`, `QUERY_STRING` and standard
 input.** Most of the environment variables available to your CGI program
@@ -61,6 +67,8 @@ modified by external users. This is not the case with `PATH_INFO`,
 standard input. Be sure to validate and sanitize all inbound content. If
 you use a CGI library or framework to process your scripts, make sure
 you understand its limitations.
+
+</div>
 
 ### Errors
 
