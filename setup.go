@@ -142,6 +142,32 @@ func parseEnv(envs *[][2]string, args []string) (err error) {
 	return
 }
 
+func parseToken(val string, rule *ruleType, args []string, loop *bool) (err error) {
+	switch val {
+	case "match": // [1..n]
+		err = parseMatch(rule, args)
+	case "except": // [0..n]
+		err = parseExcept(rule, args)
+	case "exec": // [1]
+		err = parseExec(rule, args)
+	case "env": // [0..n]
+		err = parseEnv(&rule.envs, args)
+	case "pass_env": // [0..n]
+		rule.passEnvs = append(rule.passEnvs, args...)
+	case "empty_env": // [0..n]
+		rule.emptyEnvs = append(rule.emptyEnvs, args...)
+	case "pass_all_env": // [0]
+		err = parseAllEnv(rule, args)
+	case "dir": // [1]
+		err = parseDir(rule, args)
+	case "inspect": // [0]
+		err = parseInspect(rule, args)
+	case "}":
+		*loop = false
+	}
+	return
+}
+
 // parseBlock parses the advance brace-block form of a "cgi" configuration
 // directive
 func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
@@ -151,28 +177,7 @@ func parseBlock(c *caddy.Controller) (rule ruleType, err error) {
 			for err == nil && loop && c.Next() {
 				val := c.Val()
 				args := c.RemainingArgs()
-				switch val {
-				case "match": // [1..n]
-					err = parseMatch(&rule, args)
-				case "except": // [0..n]
-					err = parseExcept(&rule, args)
-				case "exec": // [1]
-					err = parseExec(&rule, args)
-				case "env": // [0..n]
-					err = parseEnv(&rule.envs, args)
-				case "pass_env": // [0..n]
-					rule.passEnvs = append(rule.passEnvs, args...)
-				case "empty_env": // [0..n]
-					rule.emptyEnvs = append(rule.emptyEnvs, args...)
-				case "pass_all_env": // [0]
-					err = parseAllEnv(&rule, args)
-				case "dir": // [1]
-					err = parseDir(&rule, args)
-				case "inspect": // [0]
-					err = parseInspect(&rule, args)
-				case "}":
-					loop = false
-				}
+				err = parseToken(val, &rule, args, &loop)
 			}
 			if len(rule.matches) == 0 {
 				err = errorf("block must contain at least one \"match\" subdirective")
