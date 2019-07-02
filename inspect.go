@@ -25,7 +25,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/mholt/caddy/caddyhttp/httpserver"
+	"github.com/caddyserver/caddy/caddyhttp/httpserver"
 )
 
 type kvType struct {

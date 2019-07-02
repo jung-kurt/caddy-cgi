@@ -294,7 +294,7 @@ CGI application (in this case, wapptclsh) will not be called.
       HOME ........................ /home/quixote
       LANG ........................ en_US.UTF-8
     Placeholders
-      {.} ......................... /home/quixote/go/src/github.com/mholt/caddy/caddy
+      {.} ......................... /home/quixote/go/src/github.com/caddyserver/caddy/caddy
       {host} ...................... example.com
       {match} ..................... /wapp/hello
       {method} .................... GET
