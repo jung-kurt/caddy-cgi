@@ -1,6 +1,21 @@
 /*
-Package cgi implements the common gateway interface (CGI) for Caddy, a
+Package cgi implements the common gateway interface (CGI) for Caddy 1, a
 modern, full-featured, easy-to-use web server.
+
+
+We Are Closed
+
+This CGI plugin works with version 1 of the Caddy web server. As of
+2020, this version has been superseded by version 2. Circumstances
+prevent me from porting this plugin to version 2 and then maintaining
+it. However, this is a very simple plugin as the Go standard library
+does all of the real work. The bulk of the code is spent parsing the
+configuration file and I believe this has been greatly simplified for
+version 2. Porting this software to the new version of the Caddy web
+server is a good first-time contributor project.
+
+
+Documentation
 
 This plugin lets you generate dynamic content on your website by means
 of command line scripts. To collect information about the inbound HTTP
